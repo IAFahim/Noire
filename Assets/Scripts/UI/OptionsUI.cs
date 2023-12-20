@@ -56,11 +56,13 @@ public class OptionsUI : UI
     protected override void Activate()
     {
         ToggleButtons(true);
+        AudioManager.Instance.PlayOnClick();
         UIManager.CurrentContext = gameObject;
     }
 
     protected override void Deactivate()
     {
+        AudioManager.Instance.PlayOnClick();
         ToggleButtons(false);
     }
 

@@ -120,13 +120,15 @@ public class ControlsUI : UI
         foreach (var t in layoutGroupTransformsInChildren)
             LayoutRebuilder.ForceRebuildLayoutImmediate(t);
         ToggleButtons(true);
-        container.Show();
+        AudioManager.Instance.PlayOnClick();
+        container.ForceShow();
         UIManager.CurrentContext = gameObject;
     }
 
     protected override void Deactivate()
     {
         ToggleButtons(false);
+        AudioManager.Instance.PlayOnClick();
         container.Hide();
     }
 
@@ -149,14 +151,16 @@ public class ControlsUI : UI
 
     private void RebindBinding(GameInput.Bindings binding)
     {
+        UIManager.CurrentContext = rebindUI.gameObject;
         rebindUI.Show();
         Hide();
         
         GameInput.Instance.RebindBinding(binding, () =>
         {
+            AudioManager.Instance.PlayOnClick();
             UpdateVisual();
-            Show();
-            rebindUI.Hide();
+            ForceShow();
+            rebindUI.ForceHide();
         }, () =>
         {
             WarningText.Instance.ShowPopup(2, "You cannot rebind a key to an already existing binding");

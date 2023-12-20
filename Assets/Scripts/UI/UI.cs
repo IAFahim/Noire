@@ -33,7 +33,7 @@ public class UI : MonoBehaviour
     protected CanvasGroup canvasGroup;
     protected RectTransform rectTransform;
     protected bool alternativeGameObject = false;
-    protected float animationTime = .4f;
+    public static readonly float animationTime = .5f;
     
     private Coroutine fadeCoroutine;
     private Coroutine delayedShowCoroutine;
@@ -52,7 +52,7 @@ public class UI : MonoBehaviour
     }
 
     /// Shows an UI element by fading. If another fade coroutine is going at the same time,
-    /// this operation is canceled, and Activate will not be called. 
+    /// this operation is canceled, and Activate will not be called.
     public bool Show(bool activate=true)
     {
         if (CanAnimate)
@@ -147,6 +147,8 @@ public class UI : MonoBehaviour
     /// <param name="end">The ending alpha</param>
     protected IEnumerator Fade(float start, float end)
     {
+        bool isHide = end == 0;
+        
         float time = 0;
         while (time < animationTime)
         {
@@ -155,15 +157,17 @@ public class UI : MonoBehaviour
 
             canvasGroup.alpha = Mathf.Lerp(
                 start, 
-                end, 
-                StaticInfoObjects.Instance.FADE_ANIM_CURVE.Evaluate(eval)
+                end,
+                isHide
+                    ? StaticInfoObjects.Instance.FADEOUT.Evaluate(eval)
+                    : StaticInfoObjects.Instance.FADEIN.Evaluate(eval)
             );
             yield return null;
         }
         
         canvasGroup.alpha = end;
         
-        if (end == 0) // if the fade is an hide transition
+        if (isHide)
         {
             Display(false);
             LateDeactivate();

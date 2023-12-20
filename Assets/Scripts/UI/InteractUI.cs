@@ -10,7 +10,7 @@ public class InteractUI : UI
 
     private bool isShowing; 
 
-    private void Awake()
+    protected override void Awake()
     {
         alternativeGameObject = true;
         canvasGroup = GetComponent<CanvasGroup>();

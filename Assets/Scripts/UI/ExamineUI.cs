@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +8,15 @@ public class ExamineUI : UI
 
     [SerializeField] private TextMeshProUGUI examineText;
     [SerializeField] private RawImage examineImage;
+    private RectTransform imgRT;
+    
     [SerializeField] private ButtonUI closeButton;
 
-    private void Awake()
+    protected override void Awake()
     {
         Instance = this;
         canvasGroup = GetComponent<CanvasGroup>();
+        imgRT = examineImage.GetComponent<RectTransform>();
     }
 
     private void Start()
@@ -24,16 +25,18 @@ public class ExamineUI : UI
         closeButton.AddListener(() => Hide());
     }
 
-    public void Display(string text, Texture2D image)
+    public void Display(string text, Texture2D image=null)
     {
         gameObject.SetActive(true);
         examineText.text = text;
 
-        if (examineImage)
+        if (image)
         {
             examineImage.texture = image;
-            examineImage.GetComponent<RectTransform>().sizeDelta = new Vector2(image.width, image.height);
+            imgRT.sizeDelta = new Vector2(image.width, image.height);
         }
+        else
+            examineImage.texture = null;
 
         Show();
         HideAfterDelay(10);

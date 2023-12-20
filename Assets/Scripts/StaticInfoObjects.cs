@@ -12,7 +12,8 @@ public class StaticInfoObjects : MonoBehaviour
 {
     public static StaticInfoObjects Instance { get; private set; }
 
-    [SerializeField] public AnimationCurve FADE_ANIM_CURVE; // UI fade animation curves
+    [SerializeField] public AnimationCurve FADEIN; // UI fade animation curves
+    [SerializeField] public AnimationCurve FADEOUT; // UI fade animation curves
     
     [SerializeField] public AnimationCurve CA_DEATH_CURVE; // chromatic aberration curve
     [SerializeField] public AnimationCurve LD_DEATH_CURVE; // lens distortion curve
