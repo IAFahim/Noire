@@ -51,6 +51,7 @@ public partial class Player : Character, IDataPersistence
     #region Public Inline Functions
     public float GetPlayerHitBoxHeight() => playerHitBoxHeight;
     public Transform GetTargeter() => rangedTargeter;
+    public AbilitySO GetAbility() => currentAbility;
     public bool AddItem(CollectableItemSO item) => playerInventory.Add(item);
     public bool RemoveItem(CollectableItemSO item) => playerInventory.Remove(item);
     public void SetMaxHP(int x) => playerHealthSO.SetMaxHP(x);
