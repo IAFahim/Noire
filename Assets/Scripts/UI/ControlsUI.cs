@@ -22,6 +22,7 @@ public class ControlsUI : UI
     
     [SerializeField] private UI rebindUI;
     
+    [SerializeField] private ButtonUI resetButton;
     [SerializeField] private ButtonUI backButton;
     [SerializeField] private UI container;
     
@@ -37,23 +38,24 @@ public class ControlsUI : UI
 
     private void Start()
     {
-        moveUpButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveUp); }, ButtonImmediateCall);   
-        moveDownButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveDown); }, ButtonImmediateCall);   
-        moveLeftButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveLeft); }, ButtonImmediateCall);   
-        moveRightButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveRight); }, ButtonImmediateCall);
+        moveUpButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveUp); }, SetCurrentContext);   
+        moveDownButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveDown); }, SetCurrentContext);   
+        moveLeftButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveLeft); }, SetCurrentContext);   
+        moveRightButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveRight); }, SetCurrentContext);
        
-        lightAttackButton.AddListener(() => {RebindBinding(GameInput.Bindings.LightAttack); }, ButtonImmediateCall);
-        strongAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.StrongAttack); }, ButtonImmediateCall);
-        dashButton.AddListener(() => { RebindBinding(GameInput.Bindings.Dash); }, ButtonImmediateCall);
-        interactButton.AddListener(() => { RebindBinding(GameInput.Bindings.Interact); }, ButtonImmediateCall);
+        lightAttackButton.AddListener(() => {RebindBinding(GameInput.Bindings.LightAttack); }, SetCurrentContext);
+        strongAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.StrongAttack); }, SetCurrentContext);
+        dashButton.AddListener(() => { RebindBinding(GameInput.Bindings.Dash); }, SetCurrentContext);
+        interactButton.AddListener(() => { RebindBinding(GameInput.Bindings.Interact); }, SetCurrentContext);
      
-        ability1Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability1); }, ButtonImmediateCall);
-        ability2Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability2); }, ButtonImmediateCall);
-        ability3Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability3); }, ButtonImmediateCall);
+        ability1Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability1); }, SetCurrentContext);
+        ability2Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability2); }, SetCurrentContext);
+        ability3Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability3); }, SetCurrentContext);
 
         UpdateVisual();
         
         backButton.AddListener(DisplayOptionsMenu);
+        resetButton.AddListener(null, OnResetAllBindings);
         
         rebindUI.gameObject.SetActive(false);
         container.gameObject.SetActive(false);
@@ -147,9 +149,18 @@ public class ControlsUI : UI
         ability3Button.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Ability3);
     }
 
-    private void ButtonImmediateCall()
+    private void SetCurrentContext()
     {
         UIManager.CurrentContext = rebindUI.gameObject;
+    }
+
+    private void OnResetAllBindings()
+    {
+        GameInput.Instance.ResetAllBindings();
+        UpdateVisual();
+        foreach (var t in layoutGroupTransformsInChildren)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        WarningText.Instance.ShowPopup(2, "Bindings have been reset to default");
     }
     
     private void RebindBinding(GameInput.Bindings binding)

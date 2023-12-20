@@ -21,6 +21,7 @@ public class ControlsMainMenu : UI
 
     [SerializeField] private UI rebindUI;
     
+    [SerializeField] private ButtonUI resetButton;
     [SerializeField] private ButtonUI backButton;
     [SerializeField] private UI container;
     
@@ -53,6 +54,7 @@ public class ControlsMainMenu : UI
         UpdateVisual();
         
         backButton.AddListener(OnBackButtonClicked);
+        resetButton.AddListener(null, OnResetAllBindings);
         
         container.gameObject.SetActive(false);
         rebindUI.gameObject.SetActive(false);
@@ -113,7 +115,7 @@ public class ControlsMainMenu : UI
         ToggleButtons(false);
         container.Hide();
     }
-
+    
     private void UpdateVisual()
     {
         moveUpButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.MoveUp);
@@ -129,10 +131,17 @@ public class ControlsMainMenu : UI
         ability1Button.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Ability1);
         ability2Button.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Ability2);
         ability3Button.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Ability3);
-
+    }
+    
+    private void OnResetAllBindings()
+    {
+        GameInput.Instance.ResetAllBindings();
+        UpdateVisual();
         foreach (var t in layoutGroupTransformsInChildren)
             LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        WarningText.Instance.ShowPopup(2, "Bindings have been reset to default");
     }
+
 
     private void RebindBinding(GameInput.Bindings binding)
     {

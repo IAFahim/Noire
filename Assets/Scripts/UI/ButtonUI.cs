@@ -106,8 +106,12 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     IEnumerator InvokeCall(Action call, Action immediateCall)
     {
         immediateCall?.Invoke();
-        yield return new WaitForSeconds(.2f);
-        call?.Invoke();
+
+        if (call != null)
+        {
+            yield return new WaitForSeconds(.2f);
+            call.Invoke();
+        }
     }
 
     public void SetText(string text)

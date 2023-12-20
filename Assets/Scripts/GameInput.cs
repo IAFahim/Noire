@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+/// Handles game input to Events, and action map rebinding 
 public class GameInput : MonoBehaviour
 {
     public static GameInput Instance { get; private set; }
@@ -266,6 +268,8 @@ public class GameInput : MonoBehaviour
     }
     #endregion
 
+    #region BINDINGS
+    
     public string GetBindingText(Bindings binding)
     {
         switch (binding)
@@ -297,12 +301,10 @@ public class GameInput : MonoBehaviour
                 return gameInputActions.UI.Menu.bindings[0].ToDisplayString();
         }
     }
-    
-    public void RebindBinding(Bindings binding, Action onActionRebound, Action onDuplicateFound)
-    {
-        InputAction inputAction;
-        int bindingIndex;
 
+    /// Finds the input action and binding index associated with the `binding` 
+    private void FindActionAndIndex(Bindings binding, out InputAction inputAction, out int bindingIndex)
+    {
         switch (binding)
         {
             default:
@@ -352,6 +354,15 @@ public class GameInput : MonoBehaviour
                 break;
         }
 
+    }
+    
+    /// Rebinds a `binding` interactively by specifying two callbacks upon state change of the operation 
+    /// <param name="binding">The binding</param>
+    /// <param name="onActionRebound">Called upon operation is canceled or completed</param>
+    /// <param name="onDuplicateFound">Called upon duplicate found</param>
+    public void RebindBinding(Bindings binding, Action onActionRebound, Action onDuplicateFound)
+    {
+        FindActionAndIndex(binding, out InputAction inputAction, out int bindingIndex);
         InteractiveRebind(inputAction, bindingIndex, onActionRebound, onDuplicateFound);
     }
 
@@ -390,6 +401,9 @@ public class GameInput : MonoBehaviour
             .Start();
     }
     
+    /// Checks if the binding overwrites any existing ones
+    /// <param name="action">The input action</param>
+    /// <param name="bindingIndex">The binding index of the particular key</param>
     private bool CheckForDuplicateBindings(InputAction action, int bindingIndex)
     {
         InputBinding newBinding = action.bindings[bindingIndex];
@@ -407,6 +421,34 @@ public class GameInput : MonoBehaviour
 
         return false;
     }
+
+    public void ResetAllBindings()
+    {
+        gameInputActions.RemoveAllBindingOverrides();
+    }
+
+    /// Resets the binding associated with the action and binding index.
+    /// Swaps out any duplicate bindings found. 
+    public void ResetBinding(InputAction action, int bindingIndex)
+    {
+        InputBinding newBinding = action.bindings[bindingIndex];
+        string oldOverridePath = newBinding.overridePath;
+        
+        action.RemoveBindingOverride(bindingIndex);
+
+        foreach (var otherAction in action.actionMap.actions)
+        {
+            if (otherAction == action)
+                continue;
+
+            for (int i = 0; i < otherAction.bindings.Count; i++)
+            {
+                InputBinding binding = otherAction.bindings[i];
+                if(binding.overridePath == newBinding.path)
+                    otherAction.ApplyBindingOverride(i, oldOverridePath);
+            }
+        }
+    }
     
     void SaveUserRebinds()
     {
@@ -419,4 +461,5 @@ public class GameInput : MonoBehaviour
         var rebinds = PlayerPrefs.GetString("rebinds");
         gameInputActions.LoadBindingOverridesFromJson(rebinds);
     }
+    #endregion
 }
