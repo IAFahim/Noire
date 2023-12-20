@@ -96,7 +96,7 @@ public class DialogueUI : UI
 	}
 
 	// creates a choice view on button index i
-	private void CreateChoiceView(string choiceText, UnityAction call)
+	private void CreateChoiceView(string choiceText, Action call)
 	{
 		ButtonUI choiceButton = Instantiate (buttonPrefab, choicesHolder.transform);
 		choiceButton.SetText(choiceText);

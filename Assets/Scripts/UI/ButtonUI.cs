@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Button))]
 public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
@@ -91,10 +93,21 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         
         SetIndicatorAlphas(0);
     }
-
-    public void AddListener(UnityAction call)
+    
+    /// Adds a listener to the Button. The Call is invoked after a slight delay.
+    /// Can also specify another call which is triggered immediately on click.
+    /// <param name="call">The delayed call</param>
+    /// <param name="immediateCall">The immediate call</param>
+    public void AddListener(Action call, Action immediateCall=null)
     {
-        button.onClick.AddListener(call);
+        button.onClick.AddListener(() => StartCoroutine(InvokeCall(call, immediateCall)));
+    }
+    
+    IEnumerator InvokeCall(Action call, Action immediateCall)
+    {
+        immediateCall?.Invoke();
+        yield return new WaitForSeconds(.2f);
+        call?.Invoke();
     }
 
     public void SetText(string text)

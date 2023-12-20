@@ -19,7 +19,11 @@ public class PauseMenu : UI
     
     private void Start()
     {
-        resumeButton.AddListener(TogglePauseGame);
+        resumeButton.AddListener(() =>
+        {
+            ForceHide();
+            IsGamePaused = false;
+        });
         mainMenuButton.AddListener(OnMainMenuClick);
         optionsButton.AddListener(OnOptionsMenuClick);
         
@@ -58,9 +62,11 @@ public class PauseMenu : UI
     
     private void OnOptionsMenuClick()
     {
-        Hide(false);
-        OptionsUI.Instance.Show();
-        UIManager.CurrentContext = OptionsUI.Instance.gameObject;
+        if (Hide(false))
+        {
+            UIManager.CurrentContext = OptionsUI.Instance.gameObject;
+            OptionsUI.Instance.Show();
+        }
     }
 
     protected override void Activate()

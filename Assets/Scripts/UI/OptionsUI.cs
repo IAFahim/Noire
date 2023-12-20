@@ -29,12 +29,12 @@ public class OptionsUI : UI
         
         gameObject.SetActive(false);
         
-        GameInput.Instance.OnPauseToggle += OnPause;
+        GameInput.Instance.OnPauseToggle += BackToPauseMenu;
     }
     
     private void OnDestroy()
     {
-        GameInput.Instance.OnPauseToggle -= OnPause;
+        GameInput.Instance.OnPauseToggle -= BackToPauseMenu;
     }
     
     private void ToggleButtons(bool enable)
@@ -64,18 +64,12 @@ public class OptionsUI : UI
         AudioManager.Instance.PlayOnClick();
         ToggleButtons(false);
     }
-
-    private void OnPause()
+    
+    private void BackToPauseMenu()
     {
         if (UIManager.CurrentContext != gameObject)
             return;
         
-        if(Hide())
-            PauseMenu.Instance.Show(false);
-    }
-    
-    private void BackToPauseMenu()
-    {
         if (Hide())
         {
             UIManager.CurrentContext = PauseMenu.Instance.gameObject;
@@ -94,7 +88,7 @@ public class OptionsUI : UI
 
     private void VolChange(string vcaType, float level)
     {
-        // TODO: play slider volume change sfx
+        AudioManager.Instance.PlayOnClick();
         AudioManager.Instance.SetVolume(vcaType, level);
     }
 }

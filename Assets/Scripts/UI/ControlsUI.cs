@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -36,19 +37,19 @@ public class ControlsUI : UI
 
     private void Start()
     {
-        moveUpButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveUp); });   
-        moveDownButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveDown); });   
-        moveLeftButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveLeft); });   
-        moveRightButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveRight); });
+        moveUpButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveUp); }, ButtonImmediateCall);   
+        moveDownButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveDown); }, ButtonImmediateCall);   
+        moveLeftButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveLeft); }, ButtonImmediateCall);   
+        moveRightButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveRight); }, ButtonImmediateCall);
        
-        lightAttackButton.AddListener(() => {RebindBinding(GameInput.Bindings.LightAttack); });   
-        strongAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.StrongAttack); });
-        dashButton.AddListener(() => { RebindBinding(GameInput.Bindings.Dash); });
-        interactButton.AddListener(() => { RebindBinding(GameInput.Bindings.Interact); });
-       
-        ability1Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability1); });
-        ability2Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability2); });
-        ability3Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability3); });
+        lightAttackButton.AddListener(() => {RebindBinding(GameInput.Bindings.LightAttack); }, ButtonImmediateCall);
+        strongAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.StrongAttack); }, ButtonImmediateCall);
+        dashButton.AddListener(() => { RebindBinding(GameInput.Bindings.Dash); }, ButtonImmediateCall);
+        interactButton.AddListener(() => { RebindBinding(GameInput.Bindings.Interact); }, ButtonImmediateCall);
+     
+        ability1Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability1); }, ButtonImmediateCall);
+        ability2Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability2); }, ButtonImmediateCall);
+        ability3Button.AddListener(() => {RebindBinding(GameInput.Bindings.Ability3); }, ButtonImmediateCall);
 
         UpdateVisual();
         
@@ -146,9 +147,13 @@ public class ControlsUI : UI
         ability3Button.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Ability3);
     }
 
-    private void RebindBinding(GameInput.Bindings binding)
+    private void ButtonImmediateCall()
     {
         UIManager.CurrentContext = rebindUI.gameObject;
+    }
+    
+    private void RebindBinding(GameInput.Bindings binding)
+    {
         rebindUI.Show();
         Hide();
         
