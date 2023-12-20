@@ -60,6 +60,7 @@ public class PauseMenu : UI
     {
         Hide(false);
         OptionsUI.Instance.Show();
+        UIManager.CurrentContext = OptionsUI.Instance.gameObject;
     }
 
     protected override void Activate()
@@ -77,11 +78,6 @@ public class PauseMenu : UI
         GameEventsManager.Instance.GameStateEvents.PauseToggle(false);
         HUD.Instance.Show();
         UIManager.CurrentContext = null;
-    }
-
-    protected override void LateActivate()
-    {
-        UIManager.CurrentContext = gameObject;
     }
 
     private void TogglePauseGame()

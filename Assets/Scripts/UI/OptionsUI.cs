@@ -25,7 +25,7 @@ public class OptionsUI : UI
         musicSlider.onValueChanged.AddListener(delegate(float level) { VolChange("Ost", level); });
         
         controlsButton.AddListener(OnControlsButtonClicked);
-        backButton.AddListener(Back);
+        backButton.AddListener(BackToPauseMenu);
         
         gameObject.SetActive(false);
         
@@ -57,7 +57,6 @@ public class OptionsUI : UI
     {
         ToggleButtons(true);
         AudioManager.Instance.PlayOnClick();
-        UIManager.CurrentContext = gameObject;
     }
 
     protected override void Deactivate()
@@ -75,16 +74,22 @@ public class OptionsUI : UI
             PauseMenu.Instance.Show(false);
     }
     
-    private void Back()
+    private void BackToPauseMenu()
     {
-        if(Hide())
+        if (Hide())
+        {
+            UIManager.CurrentContext = PauseMenu.Instance.gameObject;
             PauseMenu.Instance.Show(false);
+        }
     }
 
     private void OnControlsButtonClicked()
     {
-        Hide();
-        ControlsUI.Instance.Show();
+        if (Hide())
+        {
+            UIManager.CurrentContext = ControlsUI.Instance.gameObject;
+            ControlsUI.Instance.Show();
+        }
     }
 
     private void VolChange(string vcaType, float level)

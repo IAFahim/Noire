@@ -26,12 +26,12 @@ public class ControlsUI : UI
     
     private IEnumerable<RectTransform> layoutGroupTransformsInChildren;
     
-    private void Awake()
+    protected override void Awake()
     {
-       Instance = this; 
-       Init();
-       layoutGroupTransformsInChildren = GetComponentsInChildren<LayoutGroup>()
-           .Select(x => x.GetComponent<RectTransform>());
+        base.Awake(); 
+        Instance = this; 
+        layoutGroupTransformsInChildren = GetComponentsInChildren<LayoutGroup>()
+            .Select(x => x.GetComponent<RectTransform>());
     }
 
     private void Start()
@@ -52,13 +52,13 @@ public class ControlsUI : UI
 
         UpdateVisual();
         
-        backButton.AddListener(OnBackButtonClicked);
+        backButton.AddListener(DisplayOptionsMenu);
         
         rebindUI.gameObject.SetActive(false);
         container.gameObject.SetActive(false);
         gameObject.SetActive(false);
         
-        GameInput.Instance.OnPauseToggle += OnPause;
+        GameInput.Instance.OnPauseToggle += DisplayOptionsMenu;
     }
 
     private void ToggleButtons(bool enable)
@@ -97,22 +97,19 @@ public class ControlsUI : UI
 
     private void OnDestroy()
     {
-        GameInput.Instance.OnPauseToggle -= OnPause;
+        GameInput.Instance.OnPauseToggle -= DisplayOptionsMenu;
     }
 
-    private void OnPause()
+    private void DisplayOptionsMenu()
     {
         if (UIManager.CurrentContext != gameObject)
             return;
         
-        if(Hide())
+        if (Hide())
+        {
+            UIManager.CurrentContext = OptionsUI.Instance.gameObject;
             OptionsUI.Instance.Show();
-    }
-    
-    private void OnBackButtonClicked()
-    {
-        if(Hide())
-            OptionsUI.Instance.Show();
+        }
     }
 
     protected override void Activate()
