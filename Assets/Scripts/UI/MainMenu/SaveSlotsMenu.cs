@@ -33,7 +33,6 @@ public class SaveSlotsMenu : UI
     protected override void Activate()
     {
         ToggleMenuButtons(true);
-        
         Dictionary<string, GameData> profilesGameData = DataPersistenceManager.Instance.GetAllProfilesGameData();
 
         // loop through each save slot in the UI and set the content appropriately

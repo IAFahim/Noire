@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     private Button button;
-    private bool canDeselect = true;
     
     [Header("Text")]
     [SerializeField] private Color textColorTransparent;
@@ -37,15 +36,17 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private RectTransform leftVerticalLine;
     [SerializeField] private RectTransform rightVerticalLine;
     [SerializeField] private float maxLineWidthH = 400f;
-    private readonly float maxLineWidthV = 100f;
+    [SerializeField] private float maxLineWidthV = 100f;
     private Vector2 origLeftSizeH;
     private Vector2 origRightSizeH;
     private Vector2 origLeftSizeV;
     private Vector2 origRightSizeV;
+    private bool canTriggerIndicatorAnimations;
 
     private void Awake()
     {
         button = GetComponent<Button>();
+        canTriggerIndicatorAnimations = leftIndicator; // only trigger indicat or if left indicator is not null
     }
 
     private void Start()
@@ -53,18 +54,21 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         initialScale = transform.localScale;
         endScale = initialScale * scaleAmount;
 
-        origLeftSizeH = leftHorizontalLine.sizeDelta;
-        origRightSizeH = rightHorizontalLine.sizeDelta;
-        origLeftSizeV = leftVerticalLine.sizeDelta;
-        origRightSizeV = rightVerticalLine.sizeDelta;
-        
+        if (canTriggerIndicatorAnimations)
+        {
+            origLeftSizeH = leftHorizontalLine.sizeDelta;
+            origRightSizeH = rightHorizontalLine.sizeDelta;
+            origLeftSizeV = leftVerticalLine.sizeDelta;
+            origRightSizeV = rightVerticalLine.sizeDelta;
+        }
+
         SetIndicatorAlphas(0);
         button.onClick.AddListener(() =>
         {
-            canDeselect = false;
             transform.localScale = initialScale;
             AudioManager.Instance.PlayOnClick();
-            StartCoroutine(ScaleLinesOnClick());
+            if (canTriggerIndicatorAnimations)
+                StartCoroutine(ScaleLinesOnClick());
         });
     }
 
@@ -147,26 +151,28 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    /// animates a scaled up effect on the width of the horizontal lines on click
+    /// animates a scaled up effect on the width of the indicator lines on click
     private IEnumerator ScaleLinesOnClick()
     {
         float t = 0;
         
-        var randomMaxLineWidthL = Random.Range(maxLineWidthH, maxLineWidthH + 50);
-        var randomMaxLineWidthR = Random.Range(maxLineWidthH, maxLineWidthH + 50);
-        var randomMaxLineHeightL = Random.Range(maxLineWidthV, maxLineWidthV + 50);
-        var randomMaxLineHeightR = Random.Range(maxLineWidthV, maxLineWidthV + 50);
+        var randomMaxLineWidthL = Random.Range(maxLineWidthH, maxLineWidthH + 30);
+        var randomMaxLineWidthR = Random.Range(maxLineWidthH, maxLineWidthH + 30);
+        var randomMaxLineHeightL = Random.Range(maxLineWidthV, maxLineWidthV + 30);
+        var randomMaxLineHeightR = Random.Range(maxLineWidthV, maxLineWidthV + 30);
 
         var hlh = leftHorizontalLine.rect.height;
         var hrh = rightHorizontalLine.rect.height;
 
         var vlw = leftVerticalLine.rect.width;
         var vrw = rightVerticalLine.rect.width;
+
+        var animTime = UI.animationTime - 0.05f;
         
-        while (t < UI.animationTime)
+        while (t < animTime)
         {
             t += Time.deltaTime;
-            float eval = t / UI.animationTime;
+            float eval = t / animTime;
             
             // horizontal lines scale
             leftHorizontalLine.sizeDelta = new Vector2(
@@ -187,13 +193,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             yield return null;
         }
         
-        leftHorizontalLine.sizeDelta = origLeftSizeH;
-        rightHorizontalLine.sizeDelta = origRightSizeH;
-        leftVerticalLine.sizeDelta = origLeftSizeV;
-        rightVerticalLine.sizeDelta = origRightSizeV;
-        
         SetIndicatorAlphas(0);
-        canDeselect = true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -216,7 +216,9 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (!button.interactable || scaleOnSelect != null)
             return;
-
+        
+        ResetIndicators();
+        
         if (scaledownOnDeSelect != null)
         {
             StopCoroutine(scaledownOnDeSelect);
@@ -229,7 +231,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnDeselect(BaseEventData eventData)
     {
-        if (!canDeselect || !button.interactable || scaledownOnDeSelect != null)
+        if (!button.interactable || scaledownOnDeSelect != null)
             return;
         
         if (scaleOnSelect != null)
@@ -249,10 +251,21 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void SetIndicatorAlphas(float alpha)
     {
-        if (leftIndicator)
+        if (canTriggerIndicatorAnimations)
         {
             leftIndicator.alpha = alpha;
             rightIndicator.alpha = alpha;
+        }
+    }
+
+    private void ResetIndicators()
+    {
+        if (canTriggerIndicatorAnimations)
+        {
+            leftHorizontalLine.sizeDelta = origLeftSizeH;
+            rightHorizontalLine.sizeDelta = origRightSizeH;
+            leftVerticalLine.sizeDelta = origLeftSizeV;
+            rightVerticalLine.sizeDelta = origRightSizeV;
         }
     }
 }

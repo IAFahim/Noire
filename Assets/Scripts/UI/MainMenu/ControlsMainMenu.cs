@@ -101,10 +101,11 @@ public class ControlsMainMenu : UI
 
     protected override void Activate()
     {
-        ToggleButtons(true);
         foreach (var t in layoutGroupTransformsInChildren)
             LayoutRebuilder.ForceRebuildLayoutImmediate(t);
-        container.Show();
+        ToggleButtons(true);
+        AudioManager.Instance.PlayOnClick();
+        container.ForceShow();
     }
 
     protected override void Deactivate()
@@ -139,9 +140,10 @@ public class ControlsMainMenu : UI
         Hide();
         GameInput.Instance.RebindBinding(binding, () =>
         {
-            Show();
-            rebindUI.Hide();
+            AudioManager.Instance.PlayOnClick();
             UpdateVisual();
+            ForceShow();
+            rebindUI.ForceHide();
         }, () =>
         {
             WarningText.Instance.ShowPopup(2, "You cannot rebind a key to an already existing binding");
