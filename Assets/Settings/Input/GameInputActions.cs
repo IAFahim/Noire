@@ -73,12 +73,12 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""StrongAttack"",
+                    ""name"": ""ChargedAttack"",
                     ""type"": ""Button"",
-                    ""id"": ""6a4ed285-9dfd-498e-803d-93d68057b298"",
+                    ""id"": ""fdb30c73-6329-435e-91c5-4131601dedb0"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold(duration=0.2)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -133,15 +133,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ChargedAttack"",
-                    ""type"": ""Button"",
-                    ""id"": ""fdb30c73-6329-435e-91c5-4131601dedb0"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.2)"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -236,19 +227,8 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""7f016404-032e-40e2-96f6-0b75995e7300"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""LightAttack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""37bd03ef-79cc-470f-a124-78d4031c485b"",
-                    ""path"": ""<Keyboard>/l"",
+                    ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -313,17 +293,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d2d78098-597a-48e5-9841-5cd1aa2a9ab0"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""StrongAttack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""77e675ad-d866-4fce-95a3-a3849e81b1db"",
                     ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
@@ -336,7 +305,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""940b98ea-b9ef-453b-ad7f-e6564e0dadeb"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -460,14 +429,13 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Player_CameraRight = m_Player.FindAction("CameraRight", throwIfNotFound: true);
         m_Player_CameraZoom = m_Player.FindAction("CameraZoom", throwIfNotFound: true);
         m_Player_LightAttack = m_Player.FindAction("LightAttack", throwIfNotFound: true);
-        m_Player_StrongAttack = m_Player.FindAction("StrongAttack", throwIfNotFound: true);
+        m_Player_ChargedAttack = m_Player.FindAction("ChargedAttack", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Ability1 = m_Player.FindAction("Ability1", throwIfNotFound: true);
         m_Player_Ability2 = m_Player.FindAction("Ability2", throwIfNotFound: true);
         m_Player_Ability3 = m_Player.FindAction("Ability3", throwIfNotFound: true);
         m_Player_ShiftModifier = m_Player.FindAction("ShiftModifier", throwIfNotFound: true);
-        m_Player_ChargedAttack = m_Player.FindAction("ChargedAttack", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_Pause = m_Menu.FindAction("Pause", throwIfNotFound: true);
@@ -544,14 +512,13 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CameraRight;
     private readonly InputAction m_Player_CameraZoom;
     private readonly InputAction m_Player_LightAttack;
-    private readonly InputAction m_Player_StrongAttack;
+    private readonly InputAction m_Player_ChargedAttack;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Ability1;
     private readonly InputAction m_Player_Ability2;
     private readonly InputAction m_Player_Ability3;
     private readonly InputAction m_Player_ShiftModifier;
-    private readonly InputAction m_Player_ChargedAttack;
     public struct PlayerActions
     {
         private @GameInputActions m_Wrapper;
@@ -561,14 +528,13 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         public InputAction @CameraRight => m_Wrapper.m_Player_CameraRight;
         public InputAction @CameraZoom => m_Wrapper.m_Player_CameraZoom;
         public InputAction @LightAttack => m_Wrapper.m_Player_LightAttack;
-        public InputAction @StrongAttack => m_Wrapper.m_Player_StrongAttack;
+        public InputAction @ChargedAttack => m_Wrapper.m_Player_ChargedAttack;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputAction @Ability1 => m_Wrapper.m_Player_Ability1;
         public InputAction @Ability2 => m_Wrapper.m_Player_Ability2;
         public InputAction @Ability3 => m_Wrapper.m_Player_Ability3;
         public InputAction @ShiftModifier => m_Wrapper.m_Player_ShiftModifier;
-        public InputAction @ChargedAttack => m_Wrapper.m_Player_ChargedAttack;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -593,9 +559,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @LightAttack.started += instance.OnLightAttack;
             @LightAttack.performed += instance.OnLightAttack;
             @LightAttack.canceled += instance.OnLightAttack;
-            @StrongAttack.started += instance.OnStrongAttack;
-            @StrongAttack.performed += instance.OnStrongAttack;
-            @StrongAttack.canceled += instance.OnStrongAttack;
+            @ChargedAttack.started += instance.OnChargedAttack;
+            @ChargedAttack.performed += instance.OnChargedAttack;
+            @ChargedAttack.canceled += instance.OnChargedAttack;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
@@ -614,9 +580,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @ShiftModifier.started += instance.OnShiftModifier;
             @ShiftModifier.performed += instance.OnShiftModifier;
             @ShiftModifier.canceled += instance.OnShiftModifier;
-            @ChargedAttack.started += instance.OnChargedAttack;
-            @ChargedAttack.performed += instance.OnChargedAttack;
-            @ChargedAttack.canceled += instance.OnChargedAttack;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -636,9 +599,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @LightAttack.started -= instance.OnLightAttack;
             @LightAttack.performed -= instance.OnLightAttack;
             @LightAttack.canceled -= instance.OnLightAttack;
-            @StrongAttack.started -= instance.OnStrongAttack;
-            @StrongAttack.performed -= instance.OnStrongAttack;
-            @StrongAttack.canceled -= instance.OnStrongAttack;
+            @ChargedAttack.started -= instance.OnChargedAttack;
+            @ChargedAttack.performed -= instance.OnChargedAttack;
+            @ChargedAttack.canceled -= instance.OnChargedAttack;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
@@ -657,9 +620,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @ShiftModifier.started -= instance.OnShiftModifier;
             @ShiftModifier.performed -= instance.OnShiftModifier;
             @ShiftModifier.canceled -= instance.OnShiftModifier;
-            @ChargedAttack.started -= instance.OnChargedAttack;
-            @ChargedAttack.performed -= instance.OnChargedAttack;
-            @ChargedAttack.canceled -= instance.OnChargedAttack;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -830,14 +790,13 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         void OnCameraRight(InputAction.CallbackContext context);
         void OnCameraZoom(InputAction.CallbackContext context);
         void OnLightAttack(InputAction.CallbackContext context);
-        void OnStrongAttack(InputAction.CallbackContext context);
+        void OnChargedAttack(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnAbility1(InputAction.CallbackContext context);
         void OnAbility2(InputAction.CallbackContext context);
         void OnAbility3(InputAction.CallbackContext context);
         void OnShiftModifier(InputAction.CallbackContext context);
-        void OnChargedAttack(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class WeaponMenu : UI
 {
@@ -8,5 +9,10 @@ public class WeaponMenu : UI
     {
         base.Awake();
         Instance = this;
+    }
+
+    private void Start()
+    {
+        Hide();
     }
 }

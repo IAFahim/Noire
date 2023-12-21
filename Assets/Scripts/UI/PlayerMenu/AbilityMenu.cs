@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class AbilityMenu : UI
 {
@@ -8,5 +9,10 @@ public class AbilityMenu : UI
     {
         base.Awake();
         Instance = this;
+    }
+
+    private void Start()
+    { 
+        Hide();
     }
 }

@@ -20,7 +20,11 @@ public class SaveSlotsMenu : UI
 
     private void Start()
     {
-        backButton.AddListener(BackToMainMenu, () => ToggleMenuButtons(false));
+        backButton.AddListener(() =>
+        {
+            BackToMainMenu();
+            ToggleMenuButtons(false);
+        });
         gameObject.SetActive(false);
     }
 

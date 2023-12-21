@@ -1,15 +1,23 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerMenu : UI
 {
     public static PlayerMenu Instance { get; private set; }
 
+    [Header("Buttons")]
     [SerializeField] private ButtonUI backButton;
     [SerializeField] private ButtonUI inventoryMenuButton;
     [SerializeField] private ButtonUI weaponMenuButton;
     [SerializeField] private ButtonUI abilityMenuButton;
+    
+    [Header("Line Animations")] 
+    [SerializeField] private LineScaler lineScaler;
+    [SerializeField] private LineScaler lineScalerMainFrame;
     private bool isToggledOn = false;
+
+    private UI lastContext;
     
     protected override void Awake()
     {
@@ -19,52 +27,101 @@ public class PlayerMenu : UI
 
     private void Start()
     {
-        gameObject.SetActive(false);
+        Hide();
         
         backButton.AddListener(OnBackButtonClicked);
         inventoryMenuButton.AddListener(OnInventoryMenuButtonClicked);
         weaponMenuButton.AddListener(OnWeaponMenuButtonClicked);
         abilityMenuButton.AddListener(OnAbilityMenuButtonClicked);
         
-        GameInput.Instance.OnPlayerMenuToggle += GameInput_OnPlayerMenuToggle;
+        GameInput.Instance.OnPlayerMenuToggle += OnPlayerMenuToggle;
+        GameInput.Instance.OnPauseToggle += OnPauseToggle;
     }
 
     private void OnDestroy()
     {
-        GameInput.Instance.OnPlayerMenuToggle -= GameInput_OnPlayerMenuToggle;
+        GameInput.Instance.OnPlayerMenuToggle -= OnPlayerMenuToggle;
+        GameInput.Instance.OnPauseToggle -= OnPauseToggle;
     }
 
-    private void GameInput_OnPlayerMenuToggle()
+    protected override void Activate()
     {
-        isToggledOn = !isToggledOn;
-        if (isToggledOn)
+        UIManager.CurrentContext = gameObject;
+        AudioManager.Instance.PlayOnClick();
+        GameEventsManager.Instance.GameStateEvents.UIToggle(true);
+        HUD.Instance.Hide();
+        lineScaler.Animate(false);
+        lineScalerMainFrame.Animate(false, true);
+    }
+
+    protected override void Deactivate()
+    {
+        lastContext?.Hide();
+        AudioManager.Instance.PlayOnClick();
+        GameEventsManager.Instance.GameStateEvents.UIToggle(false);
+        HUD.Instance.ShowAfterDelay(2);
+        lineScaler.Animate(true);
+        lineScalerMainFrame.Animate(true);
+    }
+
+    protected override void LateDeactivate()
+    {
+        UIManager.CurrentContext = null;
+    }
+
+    /// shows/hides when [m] is pressed
+    private void OnPlayerMenuToggle()
+    {
+        if (isToggledOn && Hide())
         {
-            Show();
+            isToggledOn = false;
         }
-        else
+        else if (!isToggledOn && Show())
         {
-            Hide();
+            isToggledOn = true;
         }
-        GameEventsManager.Instance.GameStateEvents.UIToggle(isToggledOn);
+    }
+    
+    /// hides when [esc] is pressed
+    private void OnPauseToggle()
+    {
+        if (UIManager.CurrentContext != gameObject)
+            return;
+
+        if (isToggledOn && Hide())
+            isToggledOn = false;
     }
 
     private void OnBackButtonClicked()
     {
         Hide();
+        isToggledOn = false;
     }
 
     private void OnInventoryMenuButtonClicked()
     {
-        InventoryMenu.Instance.Show();
+        if (lastContext && lastContext != InventoryMenu.Instance)
+            lastContext.ForceHide();
+        
+        InventoryMenu.Instance.ForceShow();
+        lastContext = InventoryMenu.Instance;
     }
 
     private void OnWeaponMenuButtonClicked()
     {
-        WeaponMenu.Instance.Show();
+        if (lastContext && lastContext != WeaponMenu.Instance)
+            lastContext.ForceHide();
+        
+        WeaponMenu.Instance.ForceShow();
+        lastContext = WeaponMenu.Instance;
     }
 
     private void OnAbilityMenuButtonClicked()
     {
-        AbilityMenu.Instance.Show();
+        if (lastContext && lastContext != AbilityMenu.Instance)
+            lastContext.ForceHide();
+
+        AbilityMenu.Instance.ForceShow();
+        lastContext = AbilityMenu.Instance;
     }
 }

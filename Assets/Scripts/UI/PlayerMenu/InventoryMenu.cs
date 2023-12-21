@@ -23,7 +23,7 @@ public class InventoryMenu : UI
     private void Start()
     {
         inventoryDisplay = GetComponentsInChildren<InventorySlot>();
-        gameObject.SetActive(false);
+        Hide();
     }
 
     protected override void Activate()

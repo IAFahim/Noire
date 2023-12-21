@@ -104,13 +104,11 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         SetIndicatorAlphas(0);
     }
     
-    /// Adds a listener to the Button. The Call is invoked after a slight delay.
-    /// Can also specify another call which is triggered immediately on click.
+    /// Adds a listener to the Button.
     /// <param name="call">The delayed call</param>
-    /// <param name="immediateCall">The immediate call</param>
-    public void AddListener(Action call, Action immediateCall=null)
+    public void AddListener(Action call)
     {
-        button.onClick.AddListener(() => StartCoroutine(InvokeCall(call, immediateCall)));
+        button.onClick.AddListener(() => call());
     }
     
     /// Removes all *added* listeners to the button.
@@ -328,17 +326,6 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             rightHorizontalLine.sizeDelta = origRightSizeH;
             leftVerticalLine.sizeDelta = origLeftSizeV;
             rightVerticalLine.sizeDelta = origRightSizeV;
-        }
-    }
-    
-    IEnumerator InvokeCall(Action call, Action immediateCall)
-    {
-        immediateCall?.Invoke();
-
-        if (call != null)
-        {
-            yield return new WaitForSeconds(.2f);
-            call.Invoke();
         }
     }
     

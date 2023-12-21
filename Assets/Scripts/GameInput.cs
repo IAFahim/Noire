@@ -1,7 +1,8 @@
+// #define DEBUG
+
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 
 /// Handles game input to Events, and action map rebinding 
 public class GameInput : MonoBehaviour
@@ -28,7 +29,7 @@ public class GameInput : MonoBehaviour
         Interact,
         Dash,
         LightAttack,
-        StrongAttack,
+        ChargedAttack,
         Ability1,
         Ability2,
         Ability3,
@@ -164,31 +165,31 @@ public class GameInput : MonoBehaviour
         }
     }
     
-    // toggles player and menu commands. called when in dialogues or UIs
+    // toggles player commands. called when in dialogues or UIs
     private void ToggleUI(bool isToggled)
     {
         if (isToggled)
         {
             gameInputActions.Player.Disable();
-            gameInputActions.Menu.Disable();
         }
         else
         {
             gameInputActions.Player.Enable();
-            gameInputActions.Menu.Enable();
         }
     }
     
-    // toggles escape key only. Called in transition functions
+    // toggles [esc] and [m]
     private void ToggleMenu(bool isToggled)
     {
         if (isToggled)
         {
             gameInputActions.Menu.Disable();
+            gameInputActions.UI.Disable();
         }
         else
         {
             gameInputActions.Menu.Enable();
+            gameInputActions.UI.Enable();
         }
     }
 
@@ -250,7 +251,6 @@ public class GameInput : MonoBehaviour
         OnAbilityCast?.Invoke(5, -1);
     }
     
-    
     public float GetZoomVal()
     {
         return gameInputActions.Player.CameraZoom.ReadValue<float>();
@@ -285,8 +285,8 @@ public class GameInput : MonoBehaviour
                 return gameInputActions.Player.Move.bindings[4].ToDisplayString();
             case Bindings.LightAttack:
                 return gameInputActions.Player.LightAttack.bindings[0].ToDisplayString();
-            case Bindings.StrongAttack:
-                return gameInputActions.Player.StrongAttack.bindings[0].ToDisplayString();
+            case Bindings.ChargedAttack:
+                return gameInputActions.Player.ChargedAttack.bindings[0].ToDisplayString();
             case Bindings.Dash:
                 return gameInputActions.Player.Dash.bindings[0].ToDisplayString();
             case Bindings.Interact:
@@ -328,8 +328,8 @@ public class GameInput : MonoBehaviour
                 inputAction = gameInputActions.Player.LightAttack;
                 bindingIndex = 0;
                 break;
-            case Bindings.StrongAttack:
-                inputAction = gameInputActions.Player.StrongAttack;
+            case Bindings.ChargedAttack:
+                inputAction = gameInputActions.Player.ChargedAttack;
                 bindingIndex = 0;
                 break;
             case Bindings.Dash:
@@ -360,13 +360,23 @@ public class GameInput : MonoBehaviour
     /// <param name="binding">The binding</param>
     /// <param name="onActionRebound">Called upon operation is canceled or completed</param>
     /// <param name="onDuplicateFound">Called upon duplicate found</param>
-    public void RebindBinding(Bindings binding, Action onActionRebound, Action onDuplicateFound)
+    /// <param name="onInvalidBinding">Called upon finding invalid bindings (mouse is not valid for example)</param>
+    public void RebindBinding(
+        Bindings binding, 
+        Action onActionRebound, 
+        Action onDuplicateFound, 
+        Action onInvalidBinding)
     {
         FindActionAndIndex(binding, out InputAction inputAction, out int bindingIndex);
-        InteractiveRebind(inputAction, bindingIndex, onActionRebound, onDuplicateFound);
+        InteractiveRebind(inputAction, bindingIndex, onActionRebound, onDuplicateFound, onInvalidBinding);
     }
 
-    private void InteractiveRebind(InputAction action, int bindingIndex, Action onActionRebound, Action onDuplicateFound)
+    private void InteractiveRebind(
+        InputAction action, 
+        int bindingIndex, 
+        Action onActionRebound, 
+        Action onDuplicateFound,
+        Action onInvalidBinding)
     {
         m_RebindOperation?.Cancel();
 
@@ -378,6 +388,7 @@ public class GameInput : MonoBehaviour
         
         m_RebindOperation = action.PerformInteractiveRebinding(bindingIndex)
             .WithCancelingThrough("<Keyboard>/escape")
+            .WithTimeout(10)
             .OnCancel(operation =>
             {
                 onActionRebound();
@@ -385,12 +396,19 @@ public class GameInput : MonoBehaviour
             })
             .OnComplete(operation =>
             {
-                if (CheckForDuplicateBindings(action, bindingIndex))
+                if (!CheckForInvalidBindings(action, bindingIndex))
+                {
+                    action.RemoveBindingOverride(bindingIndex);
+                    onInvalidBinding();
+                    CleanUp();
+                    InteractiveRebind(action, bindingIndex, onActionRebound, onDuplicateFound, onInvalidBinding);
+                }
+                else if (CheckForDuplicateBindings(action, bindingIndex))
                 {
                     action.RemoveBindingOverride(bindingIndex);
                     onDuplicateFound();
                     CleanUp();
-                    InteractiveRebind(action, bindingIndex, onActionRebound, onDuplicateFound);
+                    InteractiveRebind(action, bindingIndex, onActionRebound, onDuplicateFound, onInvalidBinding);
                 }
                 else
                 {
@@ -399,6 +417,21 @@ public class GameInput : MonoBehaviour
                 }
             })
             .Start();
+    }
+
+    /// checks if the binding contains `mouse`, which is invalid
+    private bool CheckForInvalidBindings(InputAction action, int bindingIndex)
+    {
+        InputBinding newBinding = action.bindings[bindingIndex];
+        if (newBinding.effectivePath.Contains("Mouse"))
+        {
+#if DEBUG
+            Debug.Log("Invalid binding Found" + newBinding.effectivePath);
+#endif
+            return false;
+        }
+
+        return true;
     }
     
     /// Checks if the binding overwrites any existing ones
@@ -414,7 +447,9 @@ public class GameInput : MonoBehaviour
                 continue;
             if (oldBinding.effectivePath == newBinding.effectivePath)
             {
+#if DEBUG
                 Debug.Log("Duplicate Binding Found" + newBinding.effectivePath);
+#endif
                 return true;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ControlsMainMenu : UI
@@ -12,7 +13,7 @@ public class ControlsMainMenu : UI
     [SerializeField] private ButtonUI moveLeftButton; 
     [SerializeField] private ButtonUI moveRightButton;
     [SerializeField] private ButtonUI lightAttackButton;
-    [SerializeField] private ButtonUI strongAttackButton;
+    [SerializeField] private ButtonUI chargedAttackButton;
     [SerializeField] private ButtonUI dashButton;
     [SerializeField] private ButtonUI interactButton;
     [SerializeField] private ButtonUI ability1Button;
@@ -43,7 +44,7 @@ public class ControlsMainMenu : UI
         moveRightButton.AddListener(() => {RebindBinding(GameInput.Bindings.MoveRight); });
        
         lightAttackButton.AddListener(() => {RebindBinding(GameInput.Bindings.LightAttack); });   
-        strongAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.StrongAttack); });
+        chargedAttackButton.AddListener(() => { RebindBinding(GameInput.Bindings.ChargedAttack); });
         dashButton.AddListener(() => { RebindBinding(GameInput.Bindings.Dash); });
         interactButton.AddListener(() => { RebindBinding(GameInput.Bindings.Interact); });
        
@@ -54,7 +55,7 @@ public class ControlsMainMenu : UI
         UpdateVisual();
         
         backButton.AddListener(OnBackButtonClicked);
-        resetButton.AddListener(null, OnResetAllBindings);
+        resetButton.AddListener(OnResetAllBindings);
         
         container.gameObject.SetActive(false);
         rebindUI.gameObject.SetActive(false);
@@ -70,7 +71,7 @@ public class ControlsMainMenu : UI
             moveLeftButton.Enable();
             moveRightButton.Enable();
             lightAttackButton.Enable();
-            strongAttackButton.Enable();
+            chargedAttackButton.Enable();
             dashButton.Enable();
             interactButton.Enable();
             ability1Button.Enable();
@@ -85,7 +86,7 @@ public class ControlsMainMenu : UI
             moveLeftButton.Disable();
             moveRightButton.Disable();
             lightAttackButton.Disable();
-            strongAttackButton.Disable();
+            chargedAttackButton.Disable();
             dashButton.Disable();
             interactButton.Disable();
             ability1Button.Disable();
@@ -124,7 +125,7 @@ public class ControlsMainMenu : UI
         moveRightButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.MoveRight);
         
         lightAttackButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.LightAttack);
-        strongAttackButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.StrongAttack);
+        chargedAttackButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.ChargedAttack);
         dashButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Dash);
         interactButton.buttonText.text = GameInput.Instance.GetBindingText(GameInput.Bindings.Interact);
         
@@ -156,6 +157,9 @@ public class ControlsMainMenu : UI
         }, () =>
         {
             WarningText.Instance.ShowPopup(2, "You cannot rebind a key to an already existing binding");
+        }, () =>
+        {
+            WarningText.Instance.ShowPopup(2, "The Mouse cannot be binded to this action");
         });
     }
 }

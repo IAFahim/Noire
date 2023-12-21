@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -33,7 +34,7 @@ public class UI : MonoBehaviour
     protected CanvasGroup canvasGroup;
     protected RectTransform rectTransform;
     protected bool alternativeGameObject = false;
-    public static readonly float animationTime = .5f;
+    public static readonly float animationTime = .6f;
     
     private Coroutine fadeCoroutine;
     private Coroutine delayedShowCoroutine;
@@ -60,7 +61,7 @@ public class UI : MonoBehaviour
             Display(true);
             if(activate)
                 Activate();
-            fadeCoroutine = StartCoroutine(Fade(0, 1));
+            fadeCoroutine = StartCoroutine(Fade(1));
             return true;
         }
 
@@ -76,7 +77,7 @@ public class UI : MonoBehaviour
         Display(true);
         if(activate)
             Activate();
-        fadeCoroutine = StartCoroutine(Fade(0, 1));
+        fadeCoroutine = StartCoroutine(Fade(1));
     }
     
     /// Shows an UI element by fading after `delay`
@@ -85,6 +86,7 @@ public class UI : MonoBehaviour
     {
         if(delayedShowCoroutine != null)
             StopCoroutine(delayedShowCoroutine);
+        Display(true);
         delayedShowCoroutine = StartCoroutine(DelayAndShow(delay, activate, force));
     }
 
@@ -105,7 +107,7 @@ public class UI : MonoBehaviour
         {
             if(deactivate)
                 Deactivate();
-            fadeCoroutine = StartCoroutine(Fade(1, 0));
+            fadeCoroutine = StartCoroutine(Fade(0));
             return true;
         }
 
@@ -121,7 +123,7 @@ public class UI : MonoBehaviour
         if(deactivate)
             Deactivate();
         if (gameObject.activeSelf)
-            fadeCoroutine = StartCoroutine(Fade(1, 0));
+            fadeCoroutine = StartCoroutine(Fade(0));
     }
 
     /// Hides an UI element by fading after `delay`
@@ -141,22 +143,26 @@ public class UI : MonoBehaviour
         else
             Hide(activate);
     }
-    
-    /// Fades the canvasGroup given a starting/ending alpha, and evaluates it along the FADE_ANIM_CURVE. 
-    /// <param name="start">The starting alpha</param>
+
+    private const float EPS = 0.03f;
+    /// Fades the canvasGroup given an ending alpha, and evaluates it along the FADE_ANIM_CURVE. 
     /// <param name="end">The ending alpha</param>
-    protected IEnumerator Fade(float start, float end)
+    protected IEnumerator Fade(float end)
     {
+        float init = canvasGroup.alpha;
         bool isHide = end == 0;
         
-        float time = 0;
-        while (time < animationTime)
+        if (Mathf.Abs(init - end) < EPS)
+            goto animationEnd;
+        
+        float t = 0;
+        while (t < animationTime)
         {
-            time += Time.deltaTime;
-            float eval = time / animationTime;
+            t += Time.deltaTime;
+            float eval = t / animationTime;
 
             canvasGroup.alpha = Mathf.Lerp(
-                start, 
+                init, 
                 end,
                 isHide
                     ? StaticInfoObjects.Instance.FADEOUT.Evaluate(eval)
@@ -165,19 +171,22 @@ public class UI : MonoBehaviour
             yield return null;
         }
         
-        canvasGroup.alpha = end;
-        
-        if (isHide)
+        animationEnd:
         {
-            Display(false);
-            LateDeactivate();
-        }
-        else
-        {
-            LateActivate();
-        }
+            canvasGroup.alpha = end;
 
-        fadeCoroutine = null;
+            if (isHide)
+            {
+                Display(false);
+                LateDeactivate();
+            }
+            else
+            {
+                LateActivate();
+            }
+
+            fadeCoroutine = null;
+        }
     }
 
     private void Display(bool active)
