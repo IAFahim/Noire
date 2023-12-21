@@ -1,37 +1,34 @@
-using TMPro;
+﻿using System;
 using UnityEngine;
 
 public class PlayerMenu : UI
 {
     public static PlayerMenu Instance { get; private set; }
-    
-    // [Header("PlayerMenu Navigation Buttons")]
-    // [SerializeField] private Button swipeLeft;
-    // [SerializeField] private Button swipeRight;
 
-    [SerializeField] private InventorySO playerInventory;
-    [SerializeField] private TextMeshProUGUI descriptionArea;
+    [SerializeField] private ButtonUI backButton;
+    [SerializeField] private ButtonUI inventoryMenuButton;
+    [SerializeField] private ButtonUI weaponMenuButton;
+    [SerializeField] private ButtonUI abilityMenuButton;
     private bool isToggledOn = false;
-
-    private InventorySlot[] inventoryDisplay;
-
-    private void Awake()
+    
+    protected override void Awake()
     {
+        base.Awake();
         Instance = this;
-        
-        canvasGroup = GetComponent<CanvasGroup>();
-        
-        ToggleDescriptionText(false);
     }
 
     private void Start()
     {
-        GameInput.Instance.OnPlayerMenuToggle += GameInput_OnPlayerMenuToggle;
-
-        inventoryDisplay = GetComponentsInChildren<InventorySlot>();
         gameObject.SetActive(false);
+        
+        backButton.AddListener(OnBackButtonClicked);
+        inventoryMenuButton.AddListener(OnInventoryMenuButtonClicked);
+        weaponMenuButton.AddListener(OnWeaponMenuButtonClicked);
+        abilityMenuButton.AddListener(OnAbilityMenuButtonClicked);
+        
+        GameInput.Instance.OnPlayerMenuToggle += GameInput_OnPlayerMenuToggle;
     }
-    
+
     private void OnDestroy()
     {
         GameInput.Instance.OnPlayerMenuToggle -= GameInput_OnPlayerMenuToggle;
@@ -51,26 +48,23 @@ public class PlayerMenu : UI
         GameEventsManager.Instance.GameStateEvents.UIToggle(isToggledOn);
     }
 
-    protected override void Activate()
+    private void OnBackButtonClicked()
     {
-        if(playerInventory.Inventory.Count > inventoryDisplay.Length)
-            Debug.LogError("Inventory overflow");
-        
-        int i = 0;
-        foreach (var (item, count) in playerInventory.Inventory)
-        {
-            inventoryDisplay[i].Display(item, count);
-            i++;
-        }
+        Hide();
     }
 
-    public void SetDescriptionText(string text)
+    private void OnInventoryMenuButtonClicked()
     {
-        descriptionArea.text = text;
+        InventoryMenu.Instance.Show();
     }
 
-    public void ToggleDescriptionText(bool activate)
+    private void OnWeaponMenuButtonClicked()
     {
-        descriptionArea.enabled = activate;
+        WeaponMenu.Instance.Show();
+    }
+
+    private void OnAbilityMenuButtonClicked()
+    {
+        AbilityMenu.Instance.Show();
     }
 }

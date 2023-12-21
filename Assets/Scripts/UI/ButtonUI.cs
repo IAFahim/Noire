@@ -22,8 +22,9 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private Color textColorTransparent;
     [SerializeField] private Color textColorOpaque;
     [SerializeField] public TextMeshProUGUI buttonText;
-    
-    [Header("Text Fade Animation")]
+
+    [Header("Text Fade Animation")] 
+    private bool hasText;
     private readonly float textAlphaPeriod = 1.5f;
     private readonly float textAlphaMultiplier = 0.4f;
     private Coroutine textAlphaCycleOnSelect;
@@ -58,6 +59,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         button = GetComponent<Button>();
         canTriggerIndicatorAnimations = leftIndicator; // only trigger indicat or if left indicator is not null
+        hasText = buttonText;
     }
 
     private void Start()
@@ -89,7 +91,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         
         if (scaleOnSelect != null)
             StopCoroutine(scaleOnSelect);
-        if (textAlphaCycleOnSelect != null)
+        if (hasText && textAlphaCycleOnSelect != null)
             StopCoroutine(textAlphaCycleOnSelect);
     }
 
@@ -266,7 +268,8 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         
         ResetLines();
         DoSelect();
-        textAlphaCycleOnSelect = StartCoroutine(TextAlphaCycle());
+        if(hasText)
+            textAlphaCycleOnSelect = StartCoroutine(TextAlphaCycle());
     }
 
     public void OnDeselect(BaseEventData eventData)
@@ -276,7 +279,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         
         DoDeselect();
 
-        if (textAlphaCycleOnSelect != null)
+        if (hasText && textAlphaCycleOnSelect != null)
         {
             StopCoroutine(textAlphaCycleOnSelect);
             buttonText.alpha = 1;
