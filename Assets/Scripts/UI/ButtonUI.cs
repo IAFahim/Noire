@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections;
+using TetraCreations.Attributes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+
+/// <summary>
+/// The wrapper class on Unity Button.
+/// Provides API for enable, disable, add/remove listeners.
+/// Implements animations on select, hover, and click. 
+/// </summary>
 
 [RequireComponent(typeof(Button))]
 public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
@@ -30,21 +36,24 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private Vector3 initialScale;
     private Vector3 endScale;
     
-    [Header("Indicators and Animations")]
+    [Header("Indicators")]
     [SerializeField] private CanvasGroup leftIndicator;
     [SerializeField] private CanvasGroup rightIndicator;
-    [SerializeField] private RectTransform leftHorizontalLine;
-    [SerializeField] private RectTransform rightHorizontalLine;
-    [SerializeField] private RectTransform leftVerticalLine;
-    [SerializeField] private RectTransform rightVerticalLine;
-    [SerializeField] private float maxLineWidthH = 400f;
-    [SerializeField] private float maxLineWidthV = 100f;
+    
+    [Header("Scale Line Animations")]
+    [SerializeField] public bool scaleLines = true; // toggle enable scaleLine animations
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private RectTransform leftHorizontalLine;
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private RectTransform rightHorizontalLine;
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private RectTransform leftVerticalLine;
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private RectTransform rightVerticalLine;
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private float WOffset = 30f;
+    [DrawIf(nameof(scaleLines), true)] [SerializeField] private float HOffset = 30f;
     private Vector2 origLeftSizeH;
     private Vector2 origRightSizeH;
     private Vector2 origLeftSizeV;
     private Vector2 origRightSizeV;
     private bool canTriggerIndicatorAnimations;
-
+    
     private void Awake()
     {
         button = GetComponent<Button>();
@@ -56,7 +65,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         initialScale = transform.localScale;
         endScale = initialScale * scaleAmount;
 
-        if (canTriggerIndicatorAnimations)
+        if (scaleLines)
         {
             origLeftSizeH = leftHorizontalLine.sizeDelta;
             origRightSizeH = rightHorizontalLine.sizeDelta;
@@ -65,15 +74,13 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
         SetIndicatorAlphas(0);
-        button.onClick.AddListener(() =>
-        {
-            transform.localScale = initialScale;
-            AudioManager.Instance.PlayOnClick();
-            if (canTriggerIndicatorAnimations)
-                StartCoroutine(ScaleLinesOnClick());
-        });
+        AddDefaultListeners();
     }
-
+    
+    #region API
+    
+    /// Disables a button.  
+    /// <param name="setTransparent">whether to set the text transparent</param>
     public void Disable(bool setTransparent = true)
     {
         button.interactable = false;
@@ -86,6 +93,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             StopCoroutine(textAlphaCycleOnSelect);
     }
 
+    /// Toggles a button to be interactive, set its color to textColorOpaque 
     public void Enable()
     {
         button.interactable = true;
@@ -103,22 +111,27 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         button.onClick.AddListener(() => StartCoroutine(InvokeCall(call, immediateCall)));
     }
     
-    IEnumerator InvokeCall(Action call, Action immediateCall)
+    /// Removes all *added* listeners to the button.
+    /// <remarks>Default listeners include line scale animations, onclick/hover audio, etc</remarks> 
+    /// <param name="removeDefault">if true, EVERY listener will be removed</param>
+    public void RemoveAllListeners(bool removeDefault=false)
     {
-        immediateCall?.Invoke();
-
-        if (call != null)
-        {
-            yield return new WaitForSeconds(.2f);
-            call.Invoke();
-        }
+        button.onClick.RemoveAllListeners();
+        if (!removeDefault)
+            AddDefaultListeners();
     }
 
+    /// Sets the button text
+    /// <param name="text">The text to set to the button</param>
     public void SetText(string text)
     {
         buttonText.text = text;
     }
-
+    
+    #endregion API
+    
+    #region ANIMATION COROUTINES
+    
     /// animates a scaled up effect on the button
     private IEnumerator ScaleSelection(bool startAnimation)
     {
@@ -171,18 +184,32 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     /// animates a scaled up effect on the width of the indicator lines on click
     private IEnumerator ScaleLinesOnClick()
     {
-        float t = 0;
+        if (!scaleLines)
+            yield break;
         
-        var randomMaxLineWidthL = Random.Range(maxLineWidthH, maxLineWidthH + 30);
-        var randomMaxLineWidthR = Random.Range(maxLineWidthH, maxLineWidthH + 30);
-        var randomMaxLineHeightL = Random.Range(maxLineWidthV, maxLineWidthV + 30);
-        var randomMaxLineHeightR = Random.Range(maxLineWidthV, maxLineWidthV + 30);
+        float t = 0;
 
-        var hlh = leftHorizontalLine.rect.height;
-        var hrh = rightHorizontalLine.rect.height;
+        var rect1 = leftHorizontalLine.rect;
+        var rect2 = rightHorizontalLine.rect;
+        var rect3 = leftVerticalLine.rect;
+        var rect4 = rightVerticalLine.rect;
 
-        var vlw = leftVerticalLine.rect.width;
-        var vrw = rightVerticalLine.rect.width;
+        var rect1W = rect1.width;
+        var rect1H = rect1.height;
+
+        var rect2W = rect2.width;
+        var rect2H = rect2.height;
+
+        var rect3W = rect3.width;
+        var rect3H = rect3.height;
+        
+        var rect4W = rect4.width;
+        var rect4H = rect4.height;
+        
+        var rect1RandW = Random.Range(rect1W, rect1W + WOffset);
+        var rect2RandW = Random.Range(rect2W, rect2W + WOffset);
+        var rect3RandH = Random.Range(rect3H, rect3H + HOffset);
+        var rect4RandH = Random.Range(rect4H, rect4H + HOffset);
 
         var animTime = UI.animationTime - 0.05f;
         
@@ -193,26 +220,29 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             
             // horizontal lines scale
             leftHorizontalLine.sizeDelta = new Vector2(
-                Mathf.Lerp(leftHorizontalLine.rect.width, randomMaxLineWidthL, eval), 
-                hlh);
+                Mathf.Lerp(leftHorizontalLine.rect.width, rect1RandW, eval), 
+                rect1H);
             rightHorizontalLine.sizeDelta = new Vector2(
-                Mathf.Lerp(rightHorizontalLine.rect.width, randomMaxLineWidthR, eval), 
-                hrh);
+                Mathf.Lerp(rightHorizontalLine.rect.width, rect2RandW, eval), 
+                rect2H);
             
             // vertical lines scale
             leftVerticalLine.sizeDelta = new Vector2(
-                vlw, 
-                Mathf.Lerp(leftVerticalLine.rect.height, randomMaxLineHeightL, eval));
+                rect3W, 
+                Mathf.Lerp(leftVerticalLine.rect.height, rect3RandH, eval));
             rightVerticalLine.sizeDelta = new Vector2(
-                vrw, 
-                Mathf.Lerp(rightVerticalLine.rect.height, randomMaxLineHeightR, eval));
+                rect4W, 
+                Mathf.Lerp(rightVerticalLine.rect.height, rect4RandH, eval));
             
             yield return null;
         }
         
         SetIndicatorAlphas(0);
     }
-
+    
+    #endregion ANIMATION COROUTINES
+    
+    #region IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (button.interactable)
@@ -234,15 +264,8 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (!button.interactable || scaleOnSelect != null)
             return;
         
-        ResetIndicators();
-        
-        if (scaledownOnDeSelect != null)
-        {
-            StopCoroutine(scaledownOnDeSelect);
-            scaledownOnDeSelect = null;
-        }
-
-        scaleOnSelect = StartCoroutine(ScaleSelection(true));
+        ResetLines();
+        DoSelect();
         textAlphaCycleOnSelect = StartCoroutine(TextAlphaCycle());
     }
 
@@ -251,13 +274,7 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (!button.interactable || scaledownOnDeSelect != null)
             return;
         
-        if (scaleOnSelect != null)
-        {
-            StopCoroutine(scaleOnSelect);
-            scaleOnSelect = null;
-        }
-
-        scaledownOnDeSelect = StartCoroutine(ScaleSelection(false));
+        DoDeselect();
 
         if (textAlphaCycleOnSelect != null)
         {
@@ -266,6 +283,31 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
+    private void DoSelect()
+    {
+        if (scaledownOnDeSelect != null)
+        {
+            StopCoroutine(scaledownOnDeSelect);
+            scaledownOnDeSelect = null;
+        }
+
+        scaleOnSelect = StartCoroutine(ScaleSelection(true));
+    }
+
+    private void DoDeselect()
+    {
+        if (scaleOnSelect != null)
+        {
+            StopCoroutine(scaleOnSelect);
+            scaleOnSelect = null;
+        }
+
+        scaledownOnDeSelect = StartCoroutine(ScaleSelection(false));
+    }
+    
+    #endregion IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
+
+    #region HELPERS
     private void SetIndicatorAlphas(float alpha)
     {
         if (canTriggerIndicatorAnimations)
@@ -275,9 +317,9 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    private void ResetIndicators()
+    private void ResetLines()
     {
-        if (canTriggerIndicatorAnimations)
+        if (scaleLines)
         {
             leftHorizontalLine.sizeDelta = origLeftSizeH;
             rightHorizontalLine.sizeDelta = origRightSizeH;
@@ -285,4 +327,27 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             rightVerticalLine.sizeDelta = origRightSizeV;
         }
     }
+    
+    IEnumerator InvokeCall(Action call, Action immediateCall)
+    {
+        immediateCall?.Invoke();
+
+        if (call != null)
+        {
+            yield return new WaitForSeconds(.2f);
+            call.Invoke();
+        }
+    }
+    
+    private void AddDefaultListeners()
+    {
+        button.onClick.AddListener(() =>
+        {
+            transform.localScale = initialScale;
+            AudioManager.Instance.PlayOnClick();
+            if (canTriggerIndicatorAnimations)
+                StartCoroutine(ScaleLinesOnClick());
+        });
+    }
+    #endregion
 }

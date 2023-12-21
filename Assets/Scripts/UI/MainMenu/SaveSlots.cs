@@ -20,7 +20,7 @@ public class SaveSlot : MonoBehaviour
     private void Start()
     {
         saveSlotButton.AddListener(OnSaveSlotClicked);
-        clearButton.AddListener(OnClear);
+        clearButton.AddListener(null, OnClear);
     }
 
     private void OnSaveSlotClicked() 

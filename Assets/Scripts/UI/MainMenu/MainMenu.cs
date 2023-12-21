@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Application = UnityEngine.Device.Application;
 
 public class MainMenu : UI
 {
@@ -54,9 +55,7 @@ public class MainMenu : UI
 
     private void OnContinueGameClicked()
     {
-        ToggleButtons(false);
-        if(!Loader.Load(DataPersistenceManager.Instance.LastCheckPointScene))
-            ToggleButtons(true);
+        Loader.Load(DataPersistenceManager.Instance.LastCheckPointScene);
     }
     
     private void OnLoadGameClicked() 
@@ -68,8 +67,18 @@ public class MainMenu : UI
     private void OnQuitGameClicked()
     {
         Hide();
+        ConfirmationPopupMenu.Instance.ActivateMenu("Quit the Game?", () =>
+        {
+            Application.Quit();
+        }, () =>
+        {
+            Show();
+        });
+    }
+
+    protected override void Deactivate()
+    {
         ToggleButtons(false);
-        Invoke(nameof(Application.Quit), animationTime);
     }
 
     private void OnSettingsClicked()
@@ -81,6 +90,7 @@ public class MainMenu : UI
     // UI baseclass
     protected override void Activate()
     {
+        ToggleButtons(true);
         if (!DataPersistenceManager.Instance.HasGameData()) 
         {
             continueGameButton.Disable();

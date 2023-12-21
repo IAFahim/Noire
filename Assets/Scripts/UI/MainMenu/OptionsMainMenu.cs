@@ -59,7 +59,7 @@ public class OptionsMainMenu : UI
     private void Back()
     {
         if(Hide())
-            MainMenu.Instance.Show(false);
+            MainMenu.Instance.Show();
     }
 
     private void OnControlsButtonClicked()
@@ -70,7 +70,7 @@ public class OptionsMainMenu : UI
 
     private void VolChange(string vcaType, float level)
     {
-        // TODO: play slider volume change sfx
+        AudioManager.Instance.PlayOnClick();
         AudioManager.Instance.SetVolume(vcaType, level);
     }
 }
