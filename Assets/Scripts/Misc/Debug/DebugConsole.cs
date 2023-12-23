@@ -18,8 +18,16 @@ public class DebugConsole : MonoBehaviour
     public static DebugCommand SAVE;
     public static DebugCommand INFINITE_HP;
     public static DebugCommand INFINITE_STAMINA;
-
     public List<object> cmdList;
+    
+    [SerializeField] private ButtonUI DECREASE_HP_BTN;
+    [SerializeField] private ButtonUI DECREASE_HP_CONTINUOUS_BTN;
+    [SerializeField] private ButtonUI INCREASE_HP_BTN;
+    [SerializeField] private ButtonUI KILL_BTN;
+    [SerializeField] private ButtonUI SAVE_BTN;
+    [SerializeField] private ButtonUI INFINITE_HP_BTN;
+    [SerializeField] private ButtonUI INFINITE_STAMINA_BTN;
+    [SerializeField] private GameObject canvas;
     
     private bool showConsole;
     private string input;
@@ -74,19 +82,17 @@ public class DebugConsole : MonoBehaviour
             INFINITE_STAMINA
         };
     }
-
-    private IEnumerator dec_hp_cont(int value, float seconds)
-    {
-        while (true)
-        {
-            yield return null;
-            GameEventsManager.Instance.PlayerEvents.TakeDamage(value, Vector3.zero);
-            yield return new WaitForSeconds(seconds);
-        }
-    }
-
+    
     private void Start()
     {
+        DECREASE_HP_BTN.AddListener(() => DECREASE_HP.Invoke(1));
+        DECREASE_HP_CONTINUOUS_BTN.AddListener(() => DECREASE_HP_CONTINUOUS.Invoke((1,1)));
+        INCREASE_HP_BTN.AddListener(() => INCREASE_HP.Invoke(1));
+        KILL_BTN.AddListener(() => KILL.Invoke());
+        SAVE_BTN.AddListener(() => SAVE.Invoke());
+        INFINITE_HP_BTN.AddListener(() => INFINITE_HP.Invoke());
+        INFINITE_STAMINA_BTN.AddListener(() => INFINITE_STAMINA.Invoke());
+    
         GameInput.Instance.OnDebugConsoleToggle += OnToggleDebug;
         GameInput.Instance.OnDebugConsoleExecute += OnConsoleExecute;
 
@@ -94,6 +100,7 @@ public class DebugConsole : MonoBehaviour
         textStyle.normal.textColor = Color.white;
 
         boxStyle.normal.background = boxTex;
+        canvas.SetActive(false);
     }
 
     private void OnDisable()
@@ -105,8 +112,20 @@ public class DebugConsole : MonoBehaviour
     private void OnToggleDebug()
     {
         showConsole = !showConsole;
+        canvas.SetActive(showConsole);
         input = "";
     }
+    
+    private IEnumerator dec_hp_cont(int value, float seconds)
+    {
+        while (true)
+        {
+            yield return null;
+            GameEventsManager.Instance.PlayerEvents.TakeDamage(value, Vector3.zero);
+            yield return new WaitForSeconds(seconds);
+        }
+    }
+
 
     private void OnConsoleExecute()
     {

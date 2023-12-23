@@ -23,15 +23,15 @@ public class HUD : UI
 
     private int neutralBarLength;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         Instance = this;
-        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     private void Start()
     {
-        neutralBarLength = Player.Instance.DeepThreshold - Player.Instance.LucidThreshold;
+        neutralBarLength = Player.Instance.DeepThreshold - Player.Instance.LucidThreshold - 1;
         
         GameEventsManager.Instance.PlayerEvents.OnUpdateHealthBar += UpdateHealthBar;
         GameEventsManager.Instance.PlayerEvents.OnUpdateStaminaBar += UpdateStaminaBar;
@@ -59,39 +59,36 @@ public class HUD : UI
         ToggleHealthBars();
         var drowsiness = playerHealthSO.CurrentDrowsiness;
         
-        if (drowsiness < Player.Instance.LucidThreshold)
+        if (drowsiness <= Player.Instance.LucidThreshold) // lucid
         {
             icon.Switch(3);
             lucidDrowsiness.Display(drowsiness);
+            neutralDrowsiness.Display(0);
         }
-        else if (drowsiness > Player.Instance.DeepThreshold)
+        else if (drowsiness >= Player.Instance.DeepThreshold) // deep
         {
             icon.Switch(4);
+            lucidDrowsiness.Display(Player.Instance.LucidThreshold);
             neutralDrowsiness.Display(neutralBarLength);
-            deepDrowsiness.Display(drowsiness - Player.Instance.DeepThreshold);   
+            deepDrowsiness.Display(drowsiness - Player.Instance.DeepThreshold + 1);   
         }
-        else
+        else // neutral
         {
             var i = drowsiness - Player.Instance.LucidThreshold;
-            icon.Switch(i);
+            icon.Switch(i - 1);
             neutralDrowsiness.Display(i);
-            deepDrowsiness.Display(0);
         }
     }
 
     private void ToggleHealthBars()
     {
-        if (Player.Instance.LucidThreshold <= playerHealthSO.CurrentDrowsiness)
+        if (playerHealthSO.CurrentDrowsiness < Player.Instance.DeepThreshold)
         {
-            neutralDrowsiness.gameObject.SetActive(true);
-            deepDrowsiness.gameObject.SetActive(true);
-            lucidDrowsiness.gameObject.SetActive(false);
+            deepDrowsiness.gameObject.SetActive(false);
         }
         else
         {
-            neutralDrowsiness.gameObject.SetActive(false);
-            deepDrowsiness.gameObject.SetActive(false);
-            lucidDrowsiness.gameObject.SetActive(true);
+            deepDrowsiness.gameObject.SetActive(true);
         }
     }
 

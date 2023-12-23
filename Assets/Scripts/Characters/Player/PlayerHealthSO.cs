@@ -36,7 +36,7 @@ public class PlayerHealthSO : ScriptableObject
 
     public void ResetHealth()
     {
-        currentDrowsiness = Player.Instance.DeepThreshold;
+        currentDrowsiness = Player.Instance.DeepThreshold - 1;
     }
 
     public bool IsDead()

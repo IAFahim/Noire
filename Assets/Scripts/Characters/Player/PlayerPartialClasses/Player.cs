@@ -41,8 +41,9 @@ public partial class Player : Character, IDataPersistence
     [SerializeField] private PlayerStatisticsSO dreamThreadsSO;
     
     [Header("Player Dream State")]
+    // [0,1,2], [3,4,5], [6, 7]
     public readonly int LucidThreshold = 2;
-    public readonly int DeepThreshold = 5;
+    public readonly int DeepThreshold = 6;
     private DreamState dreamState;
 
     [Header("Player Items")] 
@@ -241,9 +242,9 @@ public partial class Player : Character, IDataPersistence
         DreamState prevDreamState = dreamState;
         
         int currDrowsiness = playerHealthSO.CurrentDrowsiness;
-        if (currDrowsiness < LucidThreshold)
+        if (currDrowsiness <= LucidThreshold)
             dreamState = DreamState.Lucid;
-        else if (currDrowsiness > DeepThreshold)
+        else if (currDrowsiness >= DeepThreshold)
             dreamState = DreamState.Deep;
         else
             dreamState = DreamState.Neutral;
