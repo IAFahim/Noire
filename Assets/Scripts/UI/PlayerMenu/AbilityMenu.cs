@@ -13,6 +13,6 @@ public class AbilityMenu : UI
 
     private void Start()
     { 
-        Hide();
+        Hide(false);
     }
 }

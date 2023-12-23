@@ -28,7 +28,7 @@ public class ControlsMainMenu : UI
     
     private IEnumerable<RectTransform> layoutGroupTransformsInChildren;
     
-    private void Awake()
+    protected override void Awake()
     {
        Instance = this; 
        Init();
@@ -56,10 +56,10 @@ public class ControlsMainMenu : UI
         
         backButton.AddListener(OnBackButtonClicked);
         resetButton.AddListener(OnResetAllBindings);
-        
-        container.gameObject.SetActive(false);
-        rebindUI.gameObject.SetActive(false);
-        gameObject.SetActive(false);
+
+        container.Hide();
+        rebindUI.Hide();
+        Hide();
     }
 
     private void ToggleButtons(bool enable)

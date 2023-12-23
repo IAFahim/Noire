@@ -26,8 +26,8 @@ public class OptionsMainMenu : UI
         
         controlsButton.AddListener(OnControlsButtonClicked);
         backButton.AddListener(Back);
-        
-        gameObject.SetActive(false);
+
+        Hide(false);
     }
     
     private void ToggleButtons(bool enable)

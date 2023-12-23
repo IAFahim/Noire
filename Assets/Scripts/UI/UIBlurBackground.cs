@@ -15,17 +15,28 @@ public class UIBlurBackground : UI
     {
         Hide();
         GameEventsManager.Instance.GameStateEvents.OnPauseToggle += OnPause;
-        GameEventsManager.Instance.GameStateEvents.OnUIToggle += OnPause;
+        GameEventsManager.Instance.GameStateEvents.OnUIToggle += OnUIPause;
     }
 
     private void OnDestroy()
     {
         GameEventsManager.Instance.GameStateEvents.OnPauseToggle -= OnPause;
-        GameEventsManager.Instance.GameStateEvents.OnUIToggle -= OnPause;
+        GameEventsManager.Instance.GameStateEvents.OnUIToggle -= OnUIPause;
     }
-
+    
     private void OnPause(bool paused)
     {
+        if(paused)
+            ForceShow();
+        else
+            ForceHide();
+    }
+
+    private void OnUIPause(bool paused, bool triggerBlur)
+    {
+        if (!triggerBlur)
+            return;
+        
         if(paused)
             ForceShow();
         else

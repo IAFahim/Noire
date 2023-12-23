@@ -3,10 +3,14 @@ using UnityEngine;
 
 public class AbilitiesHUD : UI
 {
+    public static AbilitiesHUD Instance;
+    
     [SerializeField] private AbilitiesSprite[] abilitiesSprites;
 
-    private void Awake()
+    protected override void Awake()
     {
+        Instance = this;
+        // this needs to be called in Awake! (its fine since GameEventsManager always awoken first
         GameEventsManager.Instance.PlayerEvents.OnUpdateAbility += PlayerEventsOnOnUpdateAbility;
     }
 

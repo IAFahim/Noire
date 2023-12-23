@@ -10,13 +10,15 @@ public class ConfirmationPopupMenu : UI
     [SerializeField] private ButtonUI confirmButton;
     [SerializeField] private ButtonUI cancelButton;
 
-    private void Awake()
+    protected override void Awake()
     {
         Instance = this;
-        
         canvasGroup = GetComponent<CanvasGroup>();
-        
-        gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        Hide();
     }
 
     public void ActivateMenu(string text, Action confirmAction, Action cancelAction)

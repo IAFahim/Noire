@@ -59,10 +59,10 @@ public class ControlsUI : UI
         
         backButton.AddListener(DisplayOptionsMenu);
         resetButton.AddListener(OnResetAllBindings);
-        
-        rebindUI.gameObject.SetActive(false);
-        container.gameObject.SetActive(false);
-        gameObject.SetActive(false);
+
+        rebindUI.Hide();
+        container.Hide();
+        Hide();
         
         GameInput.Instance.OnPauseToggle += DisplayOptionsMenu;
     }

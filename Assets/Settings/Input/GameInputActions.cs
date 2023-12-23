@@ -37,24 +37,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""CameraLeft"",
-                    ""type"": ""Button"",
-                    ""id"": ""de489ca1-626c-400e-8dd8-035044a00dab"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""CameraRight"",
-                    ""type"": ""Button"",
-                    ""id"": ""6c76ca7a-9b2a-4526-ac94-662c76ff1176"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""CameraZoom"",
                     ""type"": ""PassThrough"",
                     ""id"": ""aa685b8b-c73d-45fa-b466-106b7c8c31eb"",
@@ -191,28 +173,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e0c0233b-6e76-4a41-be20-f0f4e4c785e8"",
-                    ""path"": ""<Keyboard>/q"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CameraLeft"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d3fe448a-5f24-4de3-a637-0ba047c4301a"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CameraRight"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -425,8 +385,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
-        m_Player_CameraLeft = m_Player.FindAction("CameraLeft", throwIfNotFound: true);
-        m_Player_CameraRight = m_Player.FindAction("CameraRight", throwIfNotFound: true);
         m_Player_CameraZoom = m_Player.FindAction("CameraZoom", throwIfNotFound: true);
         m_Player_LightAttack = m_Player.FindAction("LightAttack", throwIfNotFound: true);
         m_Player_ChargedAttack = m_Player.FindAction("ChargedAttack", throwIfNotFound: true);
@@ -508,8 +466,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
-    private readonly InputAction m_Player_CameraLeft;
-    private readonly InputAction m_Player_CameraRight;
     private readonly InputAction m_Player_CameraZoom;
     private readonly InputAction m_Player_LightAttack;
     private readonly InputAction m_Player_ChargedAttack;
@@ -524,8 +480,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         private @GameInputActions m_Wrapper;
         public PlayerActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
-        public InputAction @CameraLeft => m_Wrapper.m_Player_CameraLeft;
-        public InputAction @CameraRight => m_Wrapper.m_Player_CameraRight;
         public InputAction @CameraZoom => m_Wrapper.m_Player_CameraZoom;
         public InputAction @LightAttack => m_Wrapper.m_Player_LightAttack;
         public InputAction @ChargedAttack => m_Wrapper.m_Player_ChargedAttack;
@@ -547,12 +501,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
-            @CameraLeft.started += instance.OnCameraLeft;
-            @CameraLeft.performed += instance.OnCameraLeft;
-            @CameraLeft.canceled += instance.OnCameraLeft;
-            @CameraRight.started += instance.OnCameraRight;
-            @CameraRight.performed += instance.OnCameraRight;
-            @CameraRight.canceled += instance.OnCameraRight;
             @CameraZoom.started += instance.OnCameraZoom;
             @CameraZoom.performed += instance.OnCameraZoom;
             @CameraZoom.canceled += instance.OnCameraZoom;
@@ -587,12 +535,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
-            @CameraLeft.started -= instance.OnCameraLeft;
-            @CameraLeft.performed -= instance.OnCameraLeft;
-            @CameraLeft.canceled -= instance.OnCameraLeft;
-            @CameraRight.started -= instance.OnCameraRight;
-            @CameraRight.performed -= instance.OnCameraRight;
-            @CameraRight.canceled -= instance.OnCameraRight;
             @CameraZoom.started -= instance.OnCameraZoom;
             @CameraZoom.performed -= instance.OnCameraZoom;
             @CameraZoom.canceled -= instance.OnCameraZoom;
@@ -786,8 +728,6 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
-        void OnCameraLeft(InputAction.CallbackContext context);
-        void OnCameraRight(InputAction.CallbackContext context);
         void OnCameraZoom(InputAction.CallbackContext context);
         void OnLightAttack(InputAction.CallbackContext context);
         void OnChargedAttack(InputAction.CallbackContext context);

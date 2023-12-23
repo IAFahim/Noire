@@ -29,8 +29,8 @@ public class PauseMenu : UI
         });
         mainMenuButton.AddListener(OnMainMenuClick);
         optionsButton.AddListener(OnOptionsMenuClick);
-        
-        gameObject.SetActive(false);
+
+        Hide(false);
         
         GameInput.Instance.OnPauseToggle += TogglePauseGame;
     }

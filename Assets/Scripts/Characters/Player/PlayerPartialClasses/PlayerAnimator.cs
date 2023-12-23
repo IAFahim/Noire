@@ -20,7 +20,10 @@ public partial class Player
     [SerializeField] private float dashSmokePuffOffsetY = .2f;
     [SerializeField] private VisualEffect runSmokePuff;
     [SerializeField] private Vector3 runSmokePuffOffset = new(0f, 0.89f, 0f);
+    
+    [Header("Death Animation")]
     [SerializeField] private float deathAnimationTime = 1f;
+    [SerializeField] private GameObject deathText;
     
     private const string WALK = "PlayerWalk";
     private const string IDLE = "PlayerIdle";
@@ -37,6 +40,8 @@ public partial class Player
         RUN_ID = Animator.StringToHash(RUN);
         DIE_ID = Animator.StringToHash(DIE);
         KNOCKBACK_ID = Animator.StringToHash(KNOCKBACK);
+        
+        deathText.gameObject.SetActive(false);
     }
     
     private void PlayDeathAnimation()
@@ -55,7 +60,13 @@ public partial class Player
         float time = 0;
         while (time < deathAnimationTime)
         {
+            time += Time.deltaTime;
             float eval = time / deathAnimationTime;
+            
+            if (eval > 0.2f)
+                deathText.gameObject.SetActive(true);
+            else if (eval > 0.8f)
+                deathText.gameObject.SetActive(false);
             
             // post effects
             PostProcessingManager.Instance.SetLensDistortionIntensity(
@@ -65,14 +76,11 @@ public partial class Player
             PostProcessingManager.Instance.SetContrast(
                 Mathf.Lerp(0, 100, StaticInfoObjects.Instance.LD_DEATH_CURVE.Evaluate(eval)));
             
-            time += Time.deltaTime;
-            
             yield return null;
         }
         
-        //TODO: end death SFX here!    
+        // end death SFX here!    
         loadingOperation.allowSceneActivation = true;
-        
     }
 
     private void PlayDreamStateChangeAnimation()

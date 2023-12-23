@@ -37,7 +37,7 @@ Transform:
   - {fileID: 7677830253633434885}
   - {fileID: 7570308798639021780}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &4985618578863161070
 CharacterController:
@@ -121,7 +121,8 @@ MonoBehaviour:
   dashSmokePuffOffsetY: 0.2
   runSmokePuff: {fileID: 0}
   runSmokePuffOffset: {x: 0, y: 0.89, z: 0}
-  deathAnimationTime: 1
+  deathAnimationTime: 3
+  deathText: {fileID: 0}
   weaponHitbox: {fileID: 0}
   rangedTargeter: {fileID: 7570308798639021780}
   invulnerableTimerMax: 1

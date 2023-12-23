@@ -107,6 +107,7 @@ public partial class Player : Character, IDataPersistence
         
         GameEventsManager.Instance.PlayerEvents.OnTakeDamage += OnHit;
         GameEventsManager.Instance.PlayerEvents.OnHealthRegen += OnRegenDrowsiness;
+        GameEventsManager.Instance.PlayerEvents.OnRest += OnRest;
         GameEventsManager.Instance.PlayerEvents.OnDreamShardsChange += OnDreamShardsChange;
         GameEventsManager.Instance.PlayerEvents.OnDreamThreadsChange += OnDreamThreadsChange;
     }
@@ -118,6 +119,7 @@ public partial class Player : Character, IDataPersistence
         
         GameEventsManager.Instance.PlayerEvents.OnTakeDamage -= OnHit;
         GameEventsManager.Instance.PlayerEvents.OnHealthRegen -= OnRegenDrowsiness;
+        GameEventsManager.Instance.PlayerEvents.OnRest -= OnRest;
         GameEventsManager.Instance.PlayerEvents.OnDreamShardsChange -= OnDreamShardsChange;
         GameEventsManager.Instance.PlayerEvents.OnDreamThreadsChange -= OnDreamThreadsChange;
     }
@@ -161,6 +163,13 @@ public partial class Player : Character, IDataPersistence
         {
             // should not decrease potion
         }
+    }
+    
+    private void OnRest()
+    {
+        playerHealthSO.ResetHealth();
+        HandleDreamState();
+        GameEventsManager.Instance.PlayerEvents.UpdateHealthBar();
     }
     
     // handle when currency change occurs

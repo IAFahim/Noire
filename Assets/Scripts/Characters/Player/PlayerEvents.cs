@@ -11,6 +11,10 @@ public class PlayerEvents
     public void RegenHealth(int value) => OnHealthRegen?.Invoke(value);
     public event Action<int> OnHealthRegen;
     
+    /// Event for player rest
+    public void Rest() => OnRest?.Invoke();
+    public event Action OnRest;
+    
     /// Event for updating dream shards. Adds `value` to current shards.
     public void DreamShardsChange(float value) => OnDreamShardsChange?.Invoke(value);
     public event Action<float> OnDreamShardsChange;

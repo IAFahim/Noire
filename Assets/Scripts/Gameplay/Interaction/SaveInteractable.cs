@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+/// Checkpoint object class
 public class SaveInteractable : InteractableObject
 {
     public override void Interact()
@@ -8,7 +9,7 @@ public class SaveInteractable : InteractableObject
         interactionsOccured++;
         interactableIndicator.Stop();
         onInteractIndicator.Restart();
-        DataPersistenceManager.Instance.SaveGame();
+        CheckpointUI.Instance.Show();
     }
 
     public override bool CanInteract()

@@ -28,8 +28,8 @@ public class OptionsUI : UI
         
         controlsButton.AddListener(OnControlsButtonClicked);
         backButton.AddListener(BackToPauseMenu);
-        
-        gameObject.SetActive(false);
+
+        Hide();
         
         GameInput.Instance.OnPauseToggle += BackToPauseMenu;
     }

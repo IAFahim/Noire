@@ -15,24 +15,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "CameraLeft",
-                    "type": "Button",
-                    "id": "de489ca1-626c-400e-8dd8-035044a00dab",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "CameraRight",
-                    "type": "Button",
-                    "id": "6c76ca7a-9b2a-4526-ac94-662c76ff1176",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "CameraZoom",
                     "type": "PassThrough",
                     "id": "aa685b8b-c73d-45fa-b466-106b7c8c31eb",
@@ -169,28 +151,6 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "e0c0233b-6e76-4a41-be20-f0f4e4c785e8",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CameraLeft",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d3fe448a-5f24-4de3-a637-0ba047c4301a",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CameraRight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

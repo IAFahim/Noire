@@ -36,9 +36,9 @@ public class UI : MonoBehaviour
     protected bool alternativeGameObject = false;
     public static readonly float animationTime = .6f;
     
-    private Coroutine fadeCoroutine;
-    private Coroutine delayedShowCoroutine;
-    private Coroutine delayedHideCoroutine;
+    protected Coroutine fadeCoroutine;
+    protected Coroutine delayedShowCoroutine;
+    protected Coroutine delayedHideCoroutine;
 
     private bool CanAnimate => fadeCoroutine == null;
     
@@ -82,6 +82,10 @@ public class UI : MonoBehaviour
     
     /// Shows an UI element by fading after `delay`
     /// Will refresh delay time if multiple calls are made before showing.
+    /// <remarks>
+    /// Does not work after a Hide() call,
+    /// since Hide() disables the object and therefore stops all related coroutines.
+    /// </remarks>
     public void ShowAfterDelay(float delay, bool activate=true, bool force=false)
     {
         if(delayedShowCoroutine != null)
@@ -92,7 +96,9 @@ public class UI : MonoBehaviour
 
     IEnumerator DelayAndShow(float delay, bool activate, bool force)
     {
+        Debug.Log($"Delay And Showing {delay}");
         yield return new WaitForSeconds(delay);
+        Debug.Log("Delay And Showing: Done waitinv");
         if (force)
             ForceShow(activate);
         else
@@ -143,7 +149,7 @@ public class UI : MonoBehaviour
         else
             Hide(activate);
     }
-
+    
     private const float EPS = 0.03f;
     /// Fades the canvasGroup given an ending alpha, and evaluates it along the FADE_ANIM_CURVE. 
     /// <param name="end">The ending alpha</param>
@@ -188,7 +194,7 @@ public class UI : MonoBehaviour
             fadeCoroutine = null;
         }
     }
-
+    
     private void Display(bool active)
     {
         if (alternativeGameObject)

@@ -22,8 +22,9 @@ public class InventoryMenu : UI
 
     private void Start()
     {
+        Hide(false);
+        
         inventoryDisplay = GetComponentsInChildren<InventorySlot>();
-        Hide();
     }
 
     protected override void Activate()

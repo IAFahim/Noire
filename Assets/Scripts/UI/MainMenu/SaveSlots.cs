@@ -13,7 +13,7 @@ public class SaveSlot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI percentageCompletedText;
     [SerializeField] private TextMeshProUGUI currentAreaText;
     [SerializeField] private TextMeshProUGUI shardsText;
-    [SerializeField] private GameObject shardsIcon;
+    [SerializeField] private GameObject infoObject;
 
     private bool hasData = false;
 
@@ -125,9 +125,7 @@ public class SaveSlot : MonoBehaviour
             saveSlotButton.Disable();
             clearButton.Disable();
         }
-        percentageCompletedText.gameObject.SetActive(interactable);
-        currentAreaText.gameObject.SetActive(interactable);
-        shardsIcon.SetActive(interactable);
-        shardsText.gameObject.SetActive(interactable);
+
+        infoObject.gameObject.SetActive(interactable);
     }
 }

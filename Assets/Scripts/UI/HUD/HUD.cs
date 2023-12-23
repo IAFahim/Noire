@@ -46,7 +46,7 @@ public class HUD : UI
         icon.Switch(2);
     }
     
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameEventsManager.Instance.PlayerEvents.OnUpdateHealthBar -= UpdateHealthBar;
         GameEventsManager.Instance.PlayerEvents.OnUpdateStaminaBar -= UpdateStaminaBar;

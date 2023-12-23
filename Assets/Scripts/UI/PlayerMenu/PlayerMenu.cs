@@ -27,7 +27,7 @@ public class PlayerMenu : UI
 
     private void Start()
     {
-        Hide();
+        Hide(false);
         
         backButton.AddListener(OnBackButtonClicked);
         inventoryMenuButton.AddListener(OnInventoryMenuButtonClicked);
@@ -47,7 +47,6 @@ public class PlayerMenu : UI
     protected override void Activate()
     {
         UIManager.CurrentContext = gameObject;
-        AudioManager.Instance.PlayOnClick();
         GameEventsManager.Instance.GameStateEvents.UIToggle(true);
         HUD.Instance.Hide();
         lineScaler.Animate(false);
@@ -57,7 +56,6 @@ public class PlayerMenu : UI
     protected override void Deactivate()
     {
         lastContext?.Hide();
-        AudioManager.Instance.PlayOnClick();
         GameEventsManager.Instance.GameStateEvents.UIToggle(false);
         HUD.Instance.ShowAfterDelay(2);
         lineScaler.Animate(true);
@@ -72,6 +70,9 @@ public class PlayerMenu : UI
     /// shows/hides when [m] is pressed
     private void OnPlayerMenuToggle()
     {
+        if (UIManager.CurrentContext != null && UIManager.CurrentContext != gameObject)
+            return;
+        
         if (isToggledOn && Hide())
         {
             isToggledOn = false;
@@ -94,8 +95,8 @@ public class PlayerMenu : UI
 
     private void OnBackButtonClicked()
     {
-        Hide();
-        isToggledOn = false;
+        if (Hide())
+            isToggledOn = false;
     }
 
     private void OnInventoryMenuButtonClicked()

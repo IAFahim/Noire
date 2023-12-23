@@ -166,7 +166,7 @@ public class GameInput : MonoBehaviour
     }
     
     // toggles player commands. called when in dialogues or UIs
-    private void ToggleUI(bool isToggled)
+    private void ToggleUI(bool isToggled, bool triggerBlur)
     {
         if (isToggled)
         {

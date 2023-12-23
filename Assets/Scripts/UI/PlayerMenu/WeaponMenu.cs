@@ -13,6 +13,6 @@ public class WeaponMenu : UI
 
     private void Start()
     {
-        Hide();
+        Hide(false);
     }
 }
