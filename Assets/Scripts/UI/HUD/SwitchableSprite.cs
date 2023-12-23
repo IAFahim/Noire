@@ -7,8 +7,8 @@ public class SwitchableSprite : MonoBehaviour
 {
     [SerializeField] private Sprite[] sprites;
     private Image image;
-    private Vector2 originalSizeDelta = new Vector2(100, 100);
-    private Vector2 scaledSizeDelta = new Vector2(200, 200);
+    private Vector2 originalSizeDelta = new (100, 100);
+    private Vector2 scaledSizeDelta = new (200, 200);
 
     private void Awake()
     {

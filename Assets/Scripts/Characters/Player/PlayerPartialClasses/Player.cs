@@ -244,7 +244,7 @@ public partial class Player : Character, IDataPersistence
         int currDrowsiness = playerHealthSO.CurrentDrowsiness;
         if (currDrowsiness <= LucidThreshold)
             dreamState = DreamState.Lucid;
-        else if (currDrowsiness >= DeepThreshold)
+        else if (currDrowsiness > DeepThreshold)
             dreamState = DreamState.Deep;
         else
             dreamState = DreamState.Neutral;
@@ -304,14 +304,9 @@ public partial class Player : Character, IDataPersistence
         }
     }
 
-    // TODO: dont update position unless its a checkpoint
     public void SaveData(GameData data)
     {
-        // IMPORTANT: here we need to save the current scene, 
-        // which was the last `targetScene` the loader had loaded
         SaveCurrencyAndInventory(data);
-        data.LastCheckPointScene = Loader.TargetScene;
-        data.LastCheckPointPosition = transform.position;
     }
     
     #endregion

@@ -55,7 +55,7 @@ public class MainMenu : UI
 
     private void OnContinueGameClicked()
     {
-        Loader.Load(DataPersistenceManager.Instance.LastCheckPointScene);
+        Loader.Load(DataPersistenceManager.Instance.GameData.LastCheckPointScene);
     }
     
     private void OnLoadGameClicked() 

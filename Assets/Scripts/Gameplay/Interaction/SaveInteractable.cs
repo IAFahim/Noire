@@ -10,6 +10,8 @@ public class SaveInteractable : InteractableObject
         interactableIndicator.Stop();
         onInteractIndicator.Restart();
         CheckpointUI.Instance.Show();
+        DataPersistenceManager.Instance.GameData.LastCheckPointScene = Loader.TargetScene;
+        DataPersistenceManager.Instance.GameData.LastCheckPointPosition = transform.position;
     }
 
     public override bool CanInteract()

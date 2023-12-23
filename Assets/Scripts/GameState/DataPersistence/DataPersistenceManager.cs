@@ -16,7 +16,7 @@ public class DataPersistenceManager : MonoBehaviour
     [SerializeField] private string fileName;
 
     // other fields
-    private GameData gameData;
+    public GameData GameData;
     private IDataPersistence[] dataPersistenceObjects;
     private GameStateFileIO fileHandler;
 
@@ -64,8 +64,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void NewGame(string profileId) 
     {
-        gameData = new GameData(profileId);
-        fileHandler.Save(gameData, selectedProfileId);
+        GameData = new GameData(profileId);
+        fileHandler.Save(GameData, selectedProfileId);
     }
     
     private void LoadGame(bool reload = true)
@@ -75,29 +75,29 @@ public class DataPersistenceManager : MonoBehaviour
         
         // if reload=true, gameData will be reloaded from disk
         if(reload)
-            gameData = fileHandler.Load(selectedProfileId);
+            GameData = fileHandler.Load(selectedProfileId);
 
-        if (gameData == null && initializeDataIfNull)
+        if (GameData == null && initializeDataIfNull)
             NewGame("dev_default_profile");
         
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) 
-            dataPersistenceObj.LoadData(gameData);
+            dataPersistenceObj.LoadData(GameData);
     }
     
     /// iterates through all data persistence objects, and calls save on each of them
     /// Improvements for the future: manually save data, and make gameData public. SaveGame() is too expensive to call
     public void SaveGame()
     {
-        if (disableDataPersistence || gameData == null) 
+        if (disableDataPersistence || GameData == null) 
             return;
         
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) 
-            dataPersistenceObj.SaveData(gameData);
+            dataPersistenceObj.SaveData(GameData);
 
         // timestamp the data
-        gameData.LastUpdated = DateTime.Now.ToBinary();
+        GameData.LastUpdated = DateTime.Now.ToBinary();
 
-        fileHandler.Save(gameData, selectedProfileId);
+        fileHandler.Save(GameData, selectedProfileId);
     }
 
     public void DeleteProfileData(string profileId)
@@ -107,12 +107,10 @@ public class DataPersistenceManager : MonoBehaviour
         LoadGame();
     }
 
-    public string LastCheckPointScene => gameData.LastCheckPointScene;
-    
     private void InitializeSelectedProfileId() 
     {
         selectedProfileId = fileHandler.GetMostRecentlyUpdatedProfileId();
-        gameData = fileHandler.Load(selectedProfileId);
+        GameData = fileHandler.Load(selectedProfileId);
     }
 
     private IDataPersistence[] FindAllDataPersistenceObjects() 
@@ -124,7 +122,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     public bool HasGameData()
     {
-        if (gameData != null)
+        if (GameData != null)
             return true;
         return GetAllProfilesGameData().Count > 0;
     }
@@ -136,11 +134,11 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void OnDeath()
     {
-        Player.Instance.SaveCurrencyAndInventory(gameData);
+        Player.Instance.SaveCurrencyAndInventory(GameData);
         
         // timestamp the data
-        gameData.LastUpdated = DateTime.Now.ToBinary();
+        GameData.LastUpdated = DateTime.Now.ToBinary();
 
-        fileHandler.Save(gameData, selectedProfileId);
+        fileHandler.Save(GameData, selectedProfileId);
     }
 }

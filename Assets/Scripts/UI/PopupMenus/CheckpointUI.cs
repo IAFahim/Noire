@@ -77,6 +77,7 @@ public class CheckpointUI : UI
     private void OnRestButtonClicked()
     {
         GameEventsManager.Instance.PlayerEvents.Rest();
+        DataPersistenceManager.Instance.SaveGame();
     }
     
     private void OnBackToBedrockPlainsButtonClicked()

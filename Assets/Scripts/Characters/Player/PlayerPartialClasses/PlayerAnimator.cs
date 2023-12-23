@@ -23,7 +23,6 @@ public partial class Player
     
     [Header("Death Animation")]
     [SerializeField] private float deathAnimationTime = 1f;
-    [SerializeField] private GameObject deathText;
     
     private const string WALK = "PlayerWalk";
     private const string IDLE = "PlayerIdle";
@@ -40,8 +39,6 @@ public partial class Player
         RUN_ID = Animator.StringToHash(RUN);
         DIE_ID = Animator.StringToHash(DIE);
         KNOCKBACK_ID = Animator.StringToHash(KNOCKBACK);
-        
-        deathText.gameObject.SetActive(false);
     }
     
     private void PlayDeathAnimation()
@@ -51,9 +48,6 @@ public partial class Player
 
     private IEnumerator DeathAnimationCoroutine()
     {
-        var loadingOperation = SceneManager.LoadSceneAsync(GameScene.DeathScene.ToString());
-        loadingOperation.allowSceneActivation = false;
-        
         PostProcessingManager.Instance.SetSaturation(-95f);
         CameraManager.Instance.CameraShake(deathAnimationTime / 2, 7f);
         
@@ -64,9 +58,7 @@ public partial class Player
             float eval = time / deathAnimationTime;
             
             if (eval > 0.2f)
-                deathText.gameObject.SetActive(true);
-            else if (eval > 0.8f)
-                deathText.gameObject.SetActive(false);
+                UIManager.Instance.EnableDeathText();
             
             // post effects
             PostProcessingManager.Instance.SetLensDistortionIntensity(
@@ -79,8 +71,9 @@ public partial class Player
             yield return null;
         }
         
-        // end death SFX here!    
-        loadingOperation.allowSceneActivation = true;
+        // end death SFX here!
+        UIManager.Instance.DisableDeathText();
+        Loader.Respawn();
     }
 
     private void PlayDreamStateChangeAnimation()
