@@ -57,9 +57,9 @@ public class ControlsMainMenu : UI
         backButton.AddListener(OnBackButtonClicked);
         resetButton.AddListener(OnResetAllBindings);
 
-        container.Hide();
-        rebindUI.Hide();
-        Hide();
+        container.Hide(false);
+        rebindUI.Hide(false);
+        Hide(false);
     }
 
     private void ToggleButtons(bool enable)

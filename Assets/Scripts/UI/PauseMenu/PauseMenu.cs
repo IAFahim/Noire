@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PauseMenu : UI 
 {
@@ -58,8 +56,14 @@ public class PauseMenu : UI
 
     private void OnMainMenuClick()
     {
+        Hide(false);
+        
         ToggleButtons(false);
-        TogglePauseGame();
+        AudioManager.Instance.PlayOnClick();
+        UIManager.CurrentContext = null;
+        lineScaler.Animate(true);
+        GameEventsManager.Instance.GameStateEvents.PauseToggle(false);
+        
         Loader.Load(GameScene.MainMenuScene);
     }
     
@@ -77,7 +81,7 @@ public class PauseMenu : UI
         ToggleButtons(true);
         AudioManager.Instance.PlayOnClick();
         GameEventsManager.Instance.GameStateEvents.PauseToggle(true);
-        HUD.Instance.Hide();
+        HUD.Instance.ForceHide();
         lineScaler.Animate(false);
     }
 

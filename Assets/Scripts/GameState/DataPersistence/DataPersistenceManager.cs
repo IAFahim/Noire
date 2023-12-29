@@ -1,3 +1,5 @@
+#define DEBUG
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +24,10 @@ public class DataPersistenceManager : MonoBehaviour
 
     private string selectedProfileId;
     
+#if DEBUG
+    private int dataPersistenceObjectsLength;
+#endif
+    
     private void Awake() 
     {
         if (Instance != null) 
@@ -40,6 +46,13 @@ public class DataPersistenceManager : MonoBehaviour
         fileHandler = new GameStateFileIO(Application.persistentDataPath, fileName);
         InitializeSelectedProfileId();
     }
+    
+#if DEBUG
+    private void Update()
+    {
+        dataPersistenceObjectsLength = dataPersistenceObjects.Length;
+    }
+#endif
     
     private void OnEnable() 
     {
@@ -84,13 +97,18 @@ public class DataPersistenceManager : MonoBehaviour
             dataPersistenceObj.LoadData(GameData);
     }
     
-    /// iterates through all data persistence objects, and calls save on each of them
-    /// Improvements for the future: manually save data, and make gameData public. SaveGame() is too expensive to call
+    /// iterates through all data persistence objects, and calls SaveData on each of them
     public void SaveGame()
     {
-        if (disableDataPersistence || GameData == null) 
+        if (disableDataPersistence || GameData == null)
+        {
+#if DEBUG
+            if (!disableDataPersistence)
+                Debug.LogError("GameData is Null. Could not save.");
+#endif
             return;
-        
+        }
+
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects) 
             dataPersistenceObj.SaveData(GameData);
 
@@ -109,8 +127,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void InitializeSelectedProfileId() 
     {
-        selectedProfileId = fileHandler.GetMostRecentlyUpdatedProfileId();
-        GameData = fileHandler.Load(selectedProfileId);
+        GameData = fileHandler.GetMostRecentlyUpdatedProfileId();
+        selectedProfileId = GameData.ProfileName;
     }
 
     private IDataPersistence[] FindAllDataPersistenceObjects() 

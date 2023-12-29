@@ -7,22 +7,18 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private float fadeinTime = 5f;
     [SerializeField] private AnimationCurve fadeinCurve;
 
-    private void Awake()
-    {
-        if (KeepOnLoad.Instance)
-            Destroy(KeepOnLoad.Instance.gameObject);
-    }
-
     private void Start()
     {
         ScriptableRendererFeatureManager.Instance.ToggleAllFog(false);
         StartCoroutine(FadeInCoroutine());
         GameInput.Instance.ToggleAll(false);
+        KeepOnLoad.Instance.EnableOnlyManager();
     }
 
     private void OnDestroy()
     {
         GameInput.Instance.ToggleAll(true);
+        KeepOnLoad.Instance.EnableAll();
     }
 
     private IEnumerator FadeInCoroutine()

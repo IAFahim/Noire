@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,10 @@ public class InventorySlot : MonoBehaviour
     private void Awake()
     {
         ToggleEnable(false);
+    }
+
+    private void Start()
+    {
         inventorySlotButton.AddListener(OnInventorySlotClicked);
     }
 

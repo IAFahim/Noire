@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// class for storing all CONST fields such as static dictionaries, animation curves, etc
@@ -23,6 +25,21 @@ public class StaticInfoObjects : MonoBehaviour
 
     [SerializeField] public AnimationCurve TEXT_ALPHA_CYCLE_CURVE; // button on hover alpha cycle
     
+    // reverse mapping from string to GameScene enum
+    private static Dictionary<string, GameScene> GAMESCENES = new();
+
+    public static GameScene ToGameScene(string scene) => GAMESCENES[scene];
+    public static GameScene ToGameScene(Scene scene) => GAMESCENES[scene.name];
+    public static SceneInfo GetSceneInfo(GameScene scene) => LOADING_INFO[scene];
+    public static bool Match(string scene1, GameScene scene2) => GAMESCENES.TryGetValue(scene1, out GameScene val) 
+                                                          && val == scene2;
+
+    public static bool Match(Scene scene1, GameScene scene2) => Match(scene1.name, scene2);
+
+    public static SceneType GetSceneType(string scene) => LOADING_INFO[GAMESCENES[scene]].Type;
+    
+    public static Color GetVoronoiColor(DreamState dreamState) => VORONOI_INDICATOR[dreamState];
+    
     private void Awake()
     {
         if (Instance != null) 
@@ -33,12 +50,18 @@ public class StaticInfoObjects : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    
+
+    private void Start()
+    {
+        var allScenes = Enum.GetValues(typeof(GameScene));
+        foreach (var scene in allScenes)
+            GAMESCENES.Add(scene.ToString(), (GameScene)scene);
+    }
+
     // maps scene -> (load type, load mode, initial position)
-    public readonly Dictionary<GameScene, SceneInfo> LOADING_INFO = new()
+    private static readonly Dictionary<GameScene, SceneInfo> LOADING_INFO = new()
     {
         { GameScene.MainMenuScene, new SceneInfo(SceneType.Single, null) },
-        { GameScene.DeathScene, new SceneInfo(SceneType.Single, null) },
         { GameScene.LoadingScene, new SceneInfo(SceneType.Single, null) },
         
         { GameScene.BedrockPlains, new SceneInfo(SceneType.Single, null) },
@@ -51,31 +74,8 @@ public class StaticInfoObjects : MonoBehaviour
         
         { GameScene.TheShorelines, new SceneInfo(SceneType.Single, null) },
     };
-    
-    // reverse mapping from string to GameScene enum
-    public readonly Dictionary<string, GameScene> GAMESCENES = new()
-    {
-        { "MainMenuScene", GameScene.MainMenuScene },
-        { "DeathScene", GameScene.DeathScene },
-        { "LoadingScene", GameScene.LoadingScene },
-        
-        { "BedrockPlains", GameScene.BedrockPlains },
-        
-        { "SoluraBase", GameScene.SoluraBase },
-        { "SoluraEntry", GameScene.SoluraEntry },
-        { "SoluraCliffHouses", GameScene.SoluraCliffHouses },
-        { "SoluraDam", GameScene.SoluraDam},
-        { "SoluraBirthday", GameScene.SoluraBirthday},
-        
-        { "TheShorelines", GameScene.TheShorelines },
-    };
-    
-    public SceneType GetSceneType(string scene)
-    {
-        return LOADING_INFO[GAMESCENES[scene]].Type;
-    }
 
-    public readonly Dictionary<DreamState, Color> VORONOI_INDICATOR = new()
+    private static readonly Dictionary<DreamState, Color> VORONOI_INDICATOR = new()
     {
         { DreamState.Neutral, Color.black },
         { DreamState.Lucid, Color.cyan },

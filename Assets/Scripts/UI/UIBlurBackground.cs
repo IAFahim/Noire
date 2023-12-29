@@ -6,7 +6,7 @@ public class UIBlurBackground : UI
 {
     [SerializeField] ScriptableRendererFeature kawaseBlur;
     
-    private void Awake()
+    protected override void Awake()
     {
         Init();
     }
@@ -34,7 +34,7 @@ public class UIBlurBackground : UI
 
     private void OnUIPause(bool paused, bool triggerBlur)
     {
-        if (!triggerBlur)
+        if (!gameObject.activeSelf || !triggerBlur)
             return;
         
         if(paused)

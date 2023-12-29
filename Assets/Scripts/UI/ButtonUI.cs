@@ -261,18 +261,19 @@ public class ButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnSelect(BaseEventData eventData)
     {
-        if (!button.interactable || scaleOnSelect != null)
+        if (!button || !button.interactable || scaleOnSelect != null)
             return;
         
         ResetLines();
         DoSelect();
+        
         if(hasText)
             textAlphaCycleOnSelect = StartCoroutine(TextAlphaCycle());
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        if (!button.interactable || scaledownOnDeSelect != null)
+        if (!button || !button.interactable || scaledownOnDeSelect != null)
             return;
         
         DoDeselect();

@@ -126,7 +126,8 @@ public class SceneTransitioner : MonoBehaviour
     }
     
     /// Fade into the next scene by calling transitionSO's Enter function
-    private IEnumerator Enter(TransitionSO transitionSO)
+    /// and invokes callback trigger upon successful loading
+    private IEnumerator Enter(TransitionSO transitionSO, bool triggerCallback)
     {
         // start to fade in with next scene
         yield return StartCoroutine(transitionSO.Enter(transitionCanvas));
@@ -138,22 +139,25 @@ public class SceneTransitioner : MonoBehaviour
         loadChildOperation = null;
         
         // Invokes the loader scene callback, if specified at this instance of the Load() call
-        Loader.SceneLoadedCallback?.Invoke();
+        if (triggerCallback)
+            Loader.SceneLoadedCallback?.Invoke();
         
         GameEventsManager.Instance.GameStateEvents.LoadToggle(true);
     }
 
     private void HandleSceneChange(Scene scene, LoadSceneMode mode)
     {
+        var triggerCallback = !StaticInfoObjects.Match(scene, GameScene.LoadingScene);
+        
         // never enters scene transition when loading a parent (since the child always will be loaded as well)
-        if (StaticInfoObjects.Instance.GetSceneType(scene.name) != SceneType.Parent)
+        if (StaticInfoObjects.GetSceneType(scene.name) != SceneType.Parent)
         {
             if (lastTransition)
-                StartCoroutine(Enter(lastTransition));
+                StartCoroutine(Enter(lastTransition, triggerCallback));
             else
             {
                 Debug.Log("Scene transition not found, using default slow fade.");
-                StartCoroutine(Enter(fadeTransitionSlow));
+                StartCoroutine(Enter(fadeTransitionSlow, triggerCallback));
             }
         }
     }

@@ -7,7 +7,8 @@ public class InteractUI : UI
     private IInteractable interactable;
     private IInteractable lastInteractable;
 
-    private bool isShowing; 
+    private bool isShowing;
+    private bool disabled;
 
     protected override void Awake()
     {
@@ -17,7 +18,7 @@ public class InteractUI : UI
 
     private void Start()
     {    
-        Hide(false);
+        Hide();
         
         GameEventsManager.Instance.GameStateEvents.OnPauseToggle += ToggleActive;
         GameEventsManager.Instance.GameStateEvents.OnUIToggle += UIToggleActive;
@@ -26,21 +27,26 @@ public class InteractUI : UI
     private void OnDestroy()
     {
         GameEventsManager.Instance.GameStateEvents.OnPauseToggle -= ToggleActive;
-        GameEventsManager.Instance.GameStateEvents.OnUIToggle += UIToggleActive;
+        GameEventsManager.Instance.GameStateEvents.OnUIToggle -= UIToggleActive;
     }
     
     private void ToggleActive(bool paused)
     {
-        gameObject.SetActive(!paused);
+        disabled = paused;
+        Update();
     }
     
-    private void UIToggleActive(bool isToggled, bool triggerBlue)
+    private void UIToggleActive(bool isToggled, bool triggerBlur)
     {
-        gameObject.SetActive(!isToggled);
+        disabled = isToggled;
+        Update();
     }
 
     private void Update()
     {
+        if (disabled)
+            return;
+        
         lastInteractable = interactable;
         interactable = Player.Instance.GetInteractableObject();
 
@@ -56,7 +62,7 @@ public class InteractUI : UI
     
     protected override void Activate()
     {
-        interactText.text = interactable.GetInteractText();
+        interactText.text = interactable?.GetInteractText();
         isShowing = true;
     }
     

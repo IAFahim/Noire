@@ -96,9 +96,7 @@ public class UI : MonoBehaviour
 
     IEnumerator DelayAndShow(float delay, bool activate, bool force)
     {
-        Debug.Log($"Delay And Showing {delay}");
         yield return new WaitForSeconds(delay);
-        Debug.Log("Delay And Showing: Done waitinv");
         if (force)
             ForceShow(activate);
         else

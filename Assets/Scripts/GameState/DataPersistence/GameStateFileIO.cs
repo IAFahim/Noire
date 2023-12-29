@@ -21,8 +21,13 @@ public class GameStateFileIO
 
     public GameData Load(string profileId, bool allowRestoreFromBackup = true) 
     {
-        if (profileId == null) 
+        if (profileId == null)
+        {
+#if DEBUG
+            Debug.LogError("Profile ID is Null. Load failed.");
+#endif
             return null;
+        }
 
         // use Path.Combine -- different OS's having different path separators
         string fullPath = Path.Combine(dataDirPath, profileId, dataFileName);
@@ -54,13 +59,21 @@ public class GameStateFileIO
                 }
             }
         }
+#if DEBUG
+        Debug.Log($"Successfully Loaded data from savepoint: {loadedData.ProfileName}");
+#endif
         return loadedData;
     }
 
     public void Save(GameData data, string profileId) 
     {
-        if (profileId == null) 
+        if (profileId == null)
+        {
+#if DEBUG
+            Debug.LogError("Profile ID is Null. Save failed.");
+#endif
             return;
+        }
 
         string fullPath = Path.Combine(dataDirPath, profileId, dataFileName);
         string fullPathJson = Path.Combine(dataDirPath, profileId, dataFileName) + ".json";
@@ -75,16 +88,16 @@ public class GameStateFileIO
             byte[] dataToStore = MessagePackSerializer.Serialize(data);
             
 #if DEBUG
-    string jsonDataToStore = JsonUtility.ToJson(data, true);
-    
-    // write the serialized data to the file
-    using (FileStream stream = new FileStream(fullPathJson, FileMode.Create))
-    {
-        using (StreamWriter writer = new StreamWriter(stream)) 
-        {
-            writer.Write(jsonDataToStore);
-        }
-    }
+            string jsonDataToStore = JsonUtility.ToJson(data, true);
+            
+            // write the serialized data to the file
+            using (FileStream stream = new FileStream(fullPathJson, FileMode.Create))
+            {
+                using (StreamWriter writer = new StreamWriter(stream)) 
+                {
+                    writer.Write(jsonDataToStore);
+                }
+            }
 #endif
             
             File.WriteAllBytes(fullPath, dataToStore);
@@ -93,8 +106,10 @@ public class GameStateFileIO
             if (verifiedGameData != null)
             {
                 File.Copy(fullPath, backupPath, true);
+#if DEBUG
                 Debug.Log("Saved game to " + fullPath);
                 Debug.Log("Saved backup game state to " + backupPath);
+#endif
             }
             else
             {
@@ -167,7 +182,7 @@ public class GameStateFileIO
         return profileDictionary;
     }
 
-    public string GetMostRecentlyUpdatedProfileId() 
+    public GameData GetMostRecentlyUpdatedProfileId() 
     {
         Dictionary<string, GameData> profilesGameData = LoadAllProfiles();
 
@@ -176,9 +191,11 @@ public class GameStateFileIO
 
         // MapReduce to find most recent save data id
         return profilesGameData
-            .Select(entry => (entry.Key, DateTime.FromBinary(entry.Value.LastUpdated)))
-            .Aggregate((a, b) => a.Item2 > b.Item2 ? a : b)
-            .Key;
+            .Aggregate((a, b) 
+                => DateTime.FromBinary(a.Value.LastUpdated) > DateTime.FromBinary(b.Value.LastUpdated) 
+                    ? a 
+                    : b)
+            .Value;
     }
 
     private bool AttemptRollback(string fullPath) 

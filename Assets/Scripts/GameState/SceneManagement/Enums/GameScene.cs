@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// Enum of all game scenes
 /// </summary>
 
 public enum GameScene
 {
     MainMenuScene,
-    DeathScene,
     LoadingScene,
     
     BedrockPlains,

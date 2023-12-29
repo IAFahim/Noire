@@ -97,7 +97,7 @@ public partial class Player : Character, IDataPersistence
     {
         PLAYER_POSITION_ID = Shader.PropertyToID(PLAYER_POSITION);
         DREAMSTATE_INDICATOR_ID = Shader.PropertyToID(DREAMSTATE_INDICATOR);            
-        Shader.SetGlobalColor(DREAMSTATE_INDICATOR_ID, StaticInfoObjects.Instance.VORONOI_INDICATOR[dreamState]);
+        Shader.SetGlobalColor(DREAMSTATE_INDICATOR_ID, StaticInfoObjects.GetVoronoiColor(dreamState));
 
         InitializeOnHitRenderers();
         
@@ -258,7 +258,7 @@ public partial class Player : Character, IDataPersistence
     {
         UpdateAbilities();
         PlayDreamStateChangeAnimation();
-        Shader.SetGlobalColor(DREAMSTATE_INDICATOR_ID, StaticInfoObjects.Instance.VORONOI_INDICATOR[dreamState]);
+        Shader.SetGlobalColor(DREAMSTATE_INDICATOR_ID, StaticInfoObjects.GetVoronoiColor(dreamState));
     }
     
     /// Handles player death
