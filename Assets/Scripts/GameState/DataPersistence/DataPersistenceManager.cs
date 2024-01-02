@@ -126,7 +126,7 @@ public class DataPersistenceManager : MonoBehaviour
     private void InitializeSelectedProfileId() 
     {
         GameData = fileHandler.GetMostRecentlyUpdatedProfileId();
-        selectedProfileId = GameData.ProfileName;
+        selectedProfileId = GameData?.ProfileName;
     }
 
     private IDataPersistence[] FindAllDataPersistenceObjects() 

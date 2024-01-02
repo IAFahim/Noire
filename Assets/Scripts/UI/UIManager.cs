@@ -56,7 +56,7 @@ public class UIManager: MonoBehaviour
         GameEventsManager.Instance.GameStateEvents.MenuToggle(true);
         
         sceneTitle.gameObject.SetActive(false);
-        mainCanvas.alpha = 0;
+        DisableUI();
         yield return new WaitForSeconds(1);
         
         AudioManager.Instance.PlaySceneBegins();
@@ -78,9 +78,18 @@ public class UIManager: MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
-        mainCanvas.alpha = 1;
+        EnableUI();
         
         GameEventsManager.Instance.GameStateEvents.MenuToggle(false);
     }
 
+    public void DisableUI()
+    {
+        mainCanvas.alpha = 0;
+    }
+
+    public void EnableUI()
+    {
+        mainCanvas.alpha = 1;
+    }
 }

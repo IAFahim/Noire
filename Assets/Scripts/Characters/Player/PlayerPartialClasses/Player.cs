@@ -280,6 +280,8 @@ public partial class Player : Character, IDataPersistence
     public void Respawn()
     {
         ChangeStateTo(CharacterState.Idle);
+        playerHealthSO.ResetHealth();
+        GameEventsManager.Instance.PlayerEvents.UpdateHealthBar();
     }
     
     #region IDataPersistence

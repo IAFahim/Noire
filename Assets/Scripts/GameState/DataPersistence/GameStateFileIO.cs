@@ -1,3 +1,5 @@
+#define _DEBUG
+
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -21,8 +23,8 @@ public class GameStateFileIO
     {
         if (profileId == null)
         {
-#if DEBUG
-            Debug.LogError("Profile ID is Null. Load failed.");
+#if _DEBUG
+            Debug.Log("Profile ID is Null. Load failed.");
 #endif
             return null;
         }
@@ -57,8 +59,8 @@ public class GameStateFileIO
                 }
             }
         }
-#if DEBUG
-        Debug.Log($"Successfully Loaded data from savepoint: {loadedData.ProfileName}");
+#if _DEBUG
+        Debug.Log($"Successfully Loaded data from savepoint: {loadedData?.ProfileName}");
 #endif
         return loadedData;
     }
@@ -85,7 +87,7 @@ public class GameStateFileIO
             // use MessagePack to binary format the GameData object
             byte[] dataToStore = MessagePackSerializer.Serialize(data);
             
-#if DEBUG
+#if _DEBUG
             string jsonDataToStore = JsonUtility.ToJson(data, true);
             
             // write the serialized data to the file
@@ -104,7 +106,7 @@ public class GameStateFileIO
             if (verifiedGameData != null)
             {
                 File.Copy(fullPath, backupPath, true);
-#if DEBUG
+#if _DEBUG
                 Debug.Log("Saved game to " + fullPath);
                 Debug.Log("Saved backup game state to " + backupPath);
 #endif
