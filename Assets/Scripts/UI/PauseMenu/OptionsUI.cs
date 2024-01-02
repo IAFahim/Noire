@@ -12,10 +12,17 @@ public class OptionsUI : UI
     
     [SerializeField] private LineScaler lineScaler;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
-        Init();
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -60,7 +67,7 @@ public class OptionsUI : UI
         ToggleButtons(true);
         AudioManager.Instance.PlayOnClick();
         lineScaler.Animate(false);
-    }
+    } 
 
     protected override void Deactivate()
     {

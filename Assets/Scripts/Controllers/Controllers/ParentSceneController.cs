@@ -38,7 +38,10 @@ public class ParentSceneController : MonoBehaviour
     {
         foreach (var obj in unaffectedInteractableObjects)
             obj.Enable();
+        
         UIManager.Instance.DisplaySceneName(sceneName);
+        HUD.Instance.Show();
+        
         LateInit();
     }
 

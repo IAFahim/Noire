@@ -22,7 +22,14 @@ public class PlayerMenu : UI
     protected override void Awake()
     {
         base.Awake();
+        
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -40,8 +47,11 @@ public class PlayerMenu : UI
 
     private void OnDestroy()
     {
-        GameInput.Instance.OnPlayerMenuToggle -= OnPlayerMenuToggle;
-        GameInput.Instance.OnPauseToggle -= OnPauseToggle;
+        if (Instance == this)
+        {
+            GameInput.Instance.OnPlayerMenuToggle -= OnPlayerMenuToggle;
+            GameInput.Instance.OnPauseToggle -= OnPauseToggle;
+        }
     }
 
     protected override void Activate()

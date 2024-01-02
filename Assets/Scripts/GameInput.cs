@@ -1,5 +1,3 @@
-// #define DEBUG
-
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -87,7 +85,7 @@ public class GameInput : MonoBehaviour
         GameEventsManager.Instance.GameStateEvents.OnMenuToggle += ToggleMenu;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         SaveUserRebinds();
         
@@ -425,7 +423,7 @@ public class GameInput : MonoBehaviour
         InputBinding newBinding = action.bindings[bindingIndex];
         if (newBinding.effectivePath.Contains("Mouse"))
         {
-#if DEBUG
+#if _DEBUG
             Debug.Log("Invalid binding Found" + newBinding.effectivePath);
 #endif
             return false;
@@ -447,7 +445,7 @@ public class GameInput : MonoBehaviour
                 continue;
             if (oldBinding.effectivePath == newBinding.effectivePath)
             {
-#if DEBUG
+#if _DEBUG
                 Debug.Log("Duplicate Binding Found" + newBinding.effectivePath);
 #endif
                 return true;

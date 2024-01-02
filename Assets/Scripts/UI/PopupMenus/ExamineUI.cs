@@ -14,7 +14,14 @@ public class ExamineUI : UI
 
     protected override void Awake()
     {
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+        
         canvasGroup = GetComponent<CanvasGroup>();
         imgRT = examineImage.GetComponent<RectTransform>();
     }

@@ -8,7 +8,14 @@ public class ThreadingUI : UI
     protected override void Awake()
     {
         base.Awake();
+        
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

@@ -11,11 +11,17 @@ public class InventoryMenu : UI
 
     private InventorySlot[] inventoryDisplay;
 
-    private void Awake()
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
         
-        canvasGroup = GetComponent<CanvasGroup>();
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
         
         ToggleDescriptionText(false);
     }

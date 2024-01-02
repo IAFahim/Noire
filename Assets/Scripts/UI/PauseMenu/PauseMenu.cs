@@ -2,19 +2,26 @@ using UnityEngine;
 
 public class PauseMenu : UI 
 {
+    public static PauseMenu Instance { get; private set; }
+    
     [SerializeField] private ButtonUI resumeButton;
     [SerializeField] private ButtonUI mainMenuButton;
     [SerializeField] private ButtonUI optionsButton;
     
     [SerializeField] private LineScaler lineScaler;
     
-    public static PauseMenu Instance { get; private set; }
-
     public bool IsGamePaused = false;
     
-    private void Awake()
+    protected override void Awake()
     {
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+        
         Init();
     }
     
@@ -35,7 +42,8 @@ public class PauseMenu : UI
 
     private void OnDestroy()
     {
-        GameInput.Instance.OnPauseToggle -= TogglePauseGame;
+        if (Instance == this)
+            GameInput.Instance.OnPauseToggle -= TogglePauseGame;
     }
     
     private void ToggleButtons(bool enable)
@@ -63,6 +71,7 @@ public class PauseMenu : UI
         UIManager.CurrentContext = null;
         lineScaler.Animate(true);
         GameEventsManager.Instance.GameStateEvents.PauseToggle(false);
+        IsGamePaused = false;
         
         Loader.Load(GameScene.MainMenuScene);
     }
@@ -82,6 +91,7 @@ public class PauseMenu : UI
         AudioManager.Instance.PlayOnClick();
         GameEventsManager.Instance.GameStateEvents.PauseToggle(true);
         HUD.Instance.ForceHide();
+        UIManager.CurrentContext = gameObject;
         lineScaler.Animate(false);
     }
 

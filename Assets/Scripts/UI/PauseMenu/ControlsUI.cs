@@ -33,8 +33,16 @@ public class ControlsUI : UI
     
     protected override void Awake()
     {
-        base.Awake(); 
-        Instance = this; 
+        base.Awake();
+        
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        
         layoutGroupTransformsInChildren = GetComponentsInChildren<LayoutGroup>()
             .Select(x => x.GetComponent<RectTransform>());
     }
@@ -103,7 +111,10 @@ public class ControlsUI : UI
 
     private void OnDestroy()
     {
-        GameInput.Instance.OnPauseToggle -= DisplayOptionsMenu;
+        if (Instance == this)
+        {
+            GameInput.Instance.OnPauseToggle -= DisplayOptionsMenu;
+        }
     }
 
     private void DisplayOptionsMenu()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ public class UIManager: MonoBehaviour
 {
     public static UIManager Instance;
 
-    /// **explicitly** managed in UI scripts
+    /// **explicitly** managed in UI scripts.
     /// Used to determine which context [esc] leads to
     public static GameObject CurrentContext;
     
@@ -34,6 +33,13 @@ public class UIManager: MonoBehaviour
     private void Start()
     {
         DisableDeathText();
+    }
+
+    private void Update()
+    {
+#if _DEBUG
+        Debug.Log(CurrentContext);
+#endif
     }
 
     public void DisableDeathText() => deathText.gameObject.SetActive(false);

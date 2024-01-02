@@ -19,7 +19,14 @@ public class DialogueUI : UI
 
     protected override void Awake()
     {
+	    if (Instance != null) 
+	    {
+		    Destroy(gameObject);
+		    return;
+	    }
 	    Instance = this;
+	    DontDestroyOnLoad(gameObject);
+	    
 	    canvasGroup = GetComponent<CanvasGroup>();
 	    rectTransform = choicesHolder.GetComponent<RectTransform>();
     }

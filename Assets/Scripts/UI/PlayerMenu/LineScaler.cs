@@ -37,15 +37,16 @@ public class LineScaler : MonoBehaviour
 
     private IEnumerator ScaleLines(bool exit, bool delay)
     {
+        foreach (var rt in lines)
+        {
+            rt.sizeDelta = initialSize;
+        }
+        
         if (delay)
         {
-            foreach (var rt in lines)
-            {
-                rt.sizeDelta = initialSize;
-            }
             yield return new WaitForSeconds(animTime);
         }
-
+        
         float t = 0;
 
         while (t < animTime)

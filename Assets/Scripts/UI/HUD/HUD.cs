@@ -26,8 +26,16 @@ public class HUD : UI
     protected override void Awake()
     {
         base.Awake();
+        
+        if (Instance != null) 
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
+
 
     private void Start()
     {
@@ -48,10 +56,13 @@ public class HUD : UI
     
     private void OnDestroy()
     {
-        GameEventsManager.Instance.PlayerEvents.OnUpdateHealthBar -= UpdateHealthBar;
-        GameEventsManager.Instance.PlayerEvents.OnUpdateStaminaBar -= UpdateStaminaBar;
-        GameEventsManager.Instance.PlayerEvents.OnDreamShardsChangeFinished -= UpdateDreamShardsCount;
-        GameEventsManager.Instance.PlayerEvents.OnDreamThreadsChangeFinished -= UpdateDreamThreadsCount;
+        if (Instance == this)
+        {
+            GameEventsManager.Instance.PlayerEvents.OnUpdateHealthBar -= UpdateHealthBar;
+            GameEventsManager.Instance.PlayerEvents.OnUpdateStaminaBar -= UpdateStaminaBar;
+            GameEventsManager.Instance.PlayerEvents.OnDreamShardsChangeFinished -= UpdateDreamShardsCount;
+            GameEventsManager.Instance.PlayerEvents.OnDreamThreadsChangeFinished -= UpdateDreamThreadsCount;
+        }
     }
 
     private void UpdateHealthBar()
